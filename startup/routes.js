@@ -9,14 +9,14 @@ const offerRoute = require('../routes/offerRoute');
 const messageRoutes = require('../routes/messageRoutes');
 const requestRoute = require('../routes/requestRoute');
 const applicationRoute = require('../routes/applicationRoute');
-const notificationRoute = require('../routes/notificationRoute');
+// const notificationRoute = require('../routes/notificationRoute');
 const ratingRoutes = require('../routes/ratingRoutes');
 // const uploadImages = require('../routes/uploadImages');
 const catRoute = require('../routes/catRoute');
 const walletRoute = require('../routes/walletRoute');
 const supportRoute = require('../routes/supportRoute');
 const payment = require('../routes/PayRoute');
-const uploadImages = require('../routes/uploadImages');
+// const uploadImages = require('../routes/uploadImages');
 
 module.exports = function (app) {
   app.use(express.json());
@@ -30,9 +30,9 @@ module.exports = function (app) {
   app.use('/api/request', authMiddleWare, requestRoute);
   app.use('/api/order', authMiddleWare, applicationRoute);
   app.use('/api/msg', authMiddleWare, messageRoutes);
-  app.use('/api/notification', authMiddleWare, notificationRoute);
+  // app.use('/api/notification', authMiddleWare, notificationRoute);
   app.use('/api/wallet',authMiddleWare, walletRoute);
-  app.use('/api/image', authMiddleWare,uploadImages);
+  // app.use('/api/image', authMiddleWare,uploadImages);
   app.use('/api/rating', ratingRoutes);
   app.use('/api/support', supportRoute);
   app.use('/api/payment', payment);

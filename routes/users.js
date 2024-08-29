@@ -9,15 +9,11 @@ const { generateCode } = require('../controllers/generateCode');
 const router = express.Router();
 const moment = require('moment');
 const { TempUser } = require('../models/TempUser');
-const Application = require('../models/Application');
+const userAvailability = require('../models/userAvailability')
 const Notification = require('../models/Notification');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const admin = require('../middleware/admin');
-const Gig = require('../models/Gig');
-const Offer = require('../models/Offer');
-const Request = require('../models/Request');
-const BankDetail = require('../models/BankDetail');
 const lang2 = require('./lang2.json');
 const lang = require('./lang.json');
 const { phoneservice } = require('../controllers/phoneservice');
@@ -311,26 +307,18 @@ router.post('/signup/:type', async (req, res) => {
   if (!validStatuses.includes(type)) {
     return res.status(400).json({ success: false, message:lang["invalidstat"] });
   }
-
   const {
     name,
-    lname,
     email,
     password,
     image,
     location,
     fcmtoken
   } = req.body;
-
-
-
   const updatEmail = String(email).trim().toLocaleLowerCase()
-
   const user = await User.findOne({ email:updatEmail });
-  
   if (user) return res.status(400).send({ success: false,statusCode:400, message:lang["emailalready"] });
-  
-  
+
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -355,6 +343,110 @@ router.post('/signup/:type', async (req, res) => {
   
   const token = generateAuthToken(newUser._id,newUser.type,newUser.lang);
   res.send({ success: true,statusCode:200, message: lang2["acc_create"], token: token, user: newUser });
+});
+//  trainer availability
+router.post('/trainer/availability', auth,async (req, res) => {
+  try {
+    const {
+      teach,
+      availability,
+      document,
+      country,
+      city,
+      hours,
+    } = req.body;
+
+    const saveData = new userAvailability({
+      user:req.user._id,
+      teach,
+      availability,
+      document,
+      country,
+      city,
+      hours
+    });
+    await saveData.save();
+
+    res.send({ success: true,statusCode:200, message: lang["acc_create"],  data: saveData });
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
+  }
+});
+router.get('/trainer/availability', auth, async (req, res) => {
+  const data = await userAvailability.findOne({user: req.user._id}).populate("user");
+  res.send({ success:data.length==0?false:true, data });
+});
+router.get('/trainers', auth, async (req, res) => {
+  let query = {};
+  const userId = req.user._id
+
+  if (req.params.id) {
+    query._id = { $lt: req.params.id };
+  }
+  // query.user = userId
+
+  const pageSize = 10;
+
+  try {
+    const data = await userAvailability.find(query).populate("user")
+      .sort({ _id: -1 })
+      .limit(pageSize)
+      .lean();
+
+    if (data.length > 0) {
+      res.status(200).json({ success: true, data: data });
+    } else {
+      res.status(200).json({ success: false, data:[],message:  'Data Not Fetched'});
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message:  lang["error"] });
+  }
+});
+
+router.put('/trainer/availability', auth,async (req, res) => {
+  
+  try {
+    const {
+      teach,
+      availability,
+      hours,
+      introduction,
+      qualification,
+      hourlyRate,
+      languages,
+      eventName,
+      eventDuration,
+      id
+    } = req.body;
+
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        teach,
+        availability,
+        hours,
+        introduction,
+        qualification,
+        hourlyRate,
+        languages,
+        eventName,
+        eventDuration,
+      }).filter(([key, value]) => value !== undefined)
+    );
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: 'Please send correct data' });
+    }  
+    const data = await userAvailability.findByIdAndUpdate(id, updateFields, {
+      new: true
+    });
+  
+    if (!data) return res.status(404).send({ success: false, message:lang["nouserfound"] });
+  
+    res.send({ success: true, message: 'Update data successfully', data });
+
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
+  }
 });
 
 router.post('/verify-otp/forget-password', passwordauth, async (req, res) => {

@@ -3,28 +3,6 @@ const Joi = require('joi');
 const config = require('config');
 const mongoose = require('mongoose');
 
-const profeDetails = {
-  about: {
-    type: String,
-    minlength: 0,
-    maxlength: 1024,
-  },
-  experience: {
-    type: String,
-    minlength: 0,
-    maxlength: 255,
-  },
-  lang: {
-    type: String,
-    minlength: 0,
-    maxlength: 255,
-  },
-  skills: {
-    type: String,
-    minlength: 0,
-    maxlength: 255,
-  },
-}
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -88,7 +66,9 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  fcmtoken: String,
+  fcmtoken: {
+    type:String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -114,7 +94,6 @@ function validateUser(user) {
     name: Joi.string().min(3).max(50).required(),
     password: Joi.string().min(5).max(255).required(),
     email: Joi.string().min(5).max(255).email(),
-    phone: Joi.string().min(5).max(255),
     code: Joi.string().min(1).max(4).required(),
     fcmtoken: Joi.string().min(0).max(1024).optional()
   };
@@ -156,4 +135,4 @@ exports.generateAuthToken = generateAuthToken;
 exports.generateIdToken = generateIdToken;
 exports.passwordApiBodyValidate = passwordApiBodyValidate;
 exports.validateCodeUser = validateCodeUser;
-exports.phoneApiBodyValidate = phoneApiBodyValidate;
+// exports.phoneApiBodyValidate = phoneApiBodyValidate;

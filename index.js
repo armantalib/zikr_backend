@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 const logger = require('./startup/logger'); // Adjust the path as needed
 const lang2 = require('./routes/lang2.json');
 const { default: axios } = require('axios');
@@ -39,6 +41,8 @@ require('./startup/validation')();
 
 // Middleware to parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Route to handle the POST request
 app.post('/newredirect/callback', async(req, res) => {

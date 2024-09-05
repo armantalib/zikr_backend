@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "doc": "node swagger.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -42,6 +43,8 @@
     "nodemailer": "^6.9.7",
     "sharp": "0.32.6",
     "socket.io": "^4.7.4",
+    "stripe": "^16.10.0",
+    "swagger-ui-express": "^5.0.1",
     "twilio": "^4.19.0",
     "util": "^0.12.5",
     "winston": "^3.11.0",
@@ -49,6 +52,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "swagger-autogen": "^2.23.7"
   }
 }

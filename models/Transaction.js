@@ -6,13 +6,18 @@ const transactionSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  order:{
+  to_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application',
+    ref: 'user',
+    required: true,
   },
-  bankdetail:{
+  session:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'BankDetail',
+    ref: 'BookSession',
+  },
+  paymentId:{
+    type: String,
+    default: 0,
   },
   balance:{
     type: Number,

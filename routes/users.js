@@ -17,6 +17,8 @@ const admin = require('../middleware/admin');
 const lang2 = require('./lang2.json');
 const lang = require('./lang.json');
 const { phoneservice } = require('../controllers/phoneservice');
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET);
 
 router.get('/me', auth, async (req, res) => {
   const user = await User.findById(req.user._id).select('-password').populate("profession")
@@ -376,6 +378,11 @@ router.get('/trainer/availability', auth, async (req, res) => {
   const data = await userAvailability.findOne({user: req.user._id}).populate("user");
   res.send({ success:data.length==0?false:true, data });
 });
+router.get('/trainer/availability/:userId', auth, async (req, res) => {
+  const userId = req.params.userId
+  const data = await userAvailability.findOne({user: userId}).populate("user");
+  res.send({ success:data.length==0?false:true, data });
+});
 router.get('/trainers', auth, async (req, res) => {
   let query = {};
   const userId = req.user._id
@@ -635,6 +642,30 @@ router.delete('/:id', [auth,admin], async (req, res) => {
   if (!user) return res.status(404).send({ success: false, message: req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
 
   res.send({ success: true, message: req.user.lang=='spanish'?lang2["userdelete"]:lang["userdelete"], user });
+});
+
+router.post('/payment-intent', async (req, res) => {
+  console.log("DD",process.env.STRIPE_SECRET)
+  const { amount } = req.body;
+  let currency = 'USD';
+  let finalAm = parseFloat(amount)*100
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+     amount:finalAm,
+      currency,
+    });
+
+    res.status(200).send({
+      success:true,
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.log("E",error);
+    
+    res.status(500).send({
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router; 

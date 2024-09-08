@@ -2,9 +2,13 @@ const express = require('express');
 const router = express.Router();
 const bookSession = require('../controllers/bookSession');
 const admin = require('../middleware/admin');
+const auth = require('../middleware/auth');
 
-router.post('/create', bookSession.create);
-router.get('/slots/:userId/:date', bookSession.getSlotsData);
+
+router.post('/create',auth, bookSession.create);
+router.get('/slots/:userId/:date',auth, bookSession.getSlotsData);
+router.get('/tutor/:status/:date?',auth, bookSession.getAllSessionTrainer);
+router.get('/student/:status/:date?',auth, bookSession.getAllSessionStudent);
 
 
 // router.get('/buyer/:status/:id?', applicationController.getAllEmployeeApplication);

@@ -28,10 +28,10 @@ module.exports = function (app) {
   app.use(express.json());
   app.use('/api/auth', auth);
   app.use('/api/users', users);
-  app.use('/api/msg', authMiddleWare, messageRoutes);
-  app.use('/api/notification', authMiddleWare, notificationRoute);
-  app.use('/api/wallet',authMiddleWare, walletRoute);
-  app.use('/api/session',authMiddleWare, bookSessionRoute);
+  app.use('/api/msg', messageRoutes);
+  app.use('/api/notification', notificationRoute);
+  app.use('/api/wallet', walletRoute);
+  app.use('/api/session', bookSessionRoute);
 
 
 

@@ -5,6 +5,17 @@ const doc = {
         title: 'Zikr App',
         description: 'Zikr App API'
     },
+    // securityDefinitions: {
+    //     apiKeyAuth: {
+    //       type: 'apiKey',
+    //       in: 'header', // can be 'header', 'query' or 'cookie'
+    //       name: 'x-auth-token', // name of the header, query parameter or cookie
+    //       description: 'Some description...'
+    //     }
+    //   },
+      schemes: [
+        "https"
+      ],
     // host: 'localhost:8080'
     host: 'https://zikr-backend.onrender.com'
 };

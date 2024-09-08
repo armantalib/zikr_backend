@@ -19,7 +19,7 @@ module.exports = async function (req, res, next) {
         .status(440)
         .send({
           message:
-            "El usuario ha sido desactivado. Póngase en contacto con el administrador para obtener más ayuda.",
+            "You are not allowed to be login please contact the support team",
         });
     }
   } catch (ex) {

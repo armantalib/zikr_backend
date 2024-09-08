@@ -100,6 +100,7 @@ router.get('/admin/dashboard', auth, async (req, res) => {
 });
 
 router.get('/totalUnseens/:type', auth, async (req, res) => {
+   // #swagger.ignore = true
   const userId = req.user._id;
 
   const type=req.params.type
@@ -133,6 +134,7 @@ router.get('/totalUnseens/:type', auth, async (req, res) => {
 });
 
 router.get('/all/:type/:id/:search?', [auth,admin], async (req, res) => {
+   // #swagger.ignore = true
   const lastId = parseInt(req.params.id)||1;
 
   // Check if lastId is a valid number
@@ -173,6 +175,7 @@ router.get('/all/:type/:id/:search?', [auth,admin], async (req, res) => {
 
 
 router.get('/other/:id', async (req, res) => {
+   // #swagger.ignore = true
   const user = await User.findById(req.params.id).select('-password').populate("profession")
 
   let query = {};
@@ -190,6 +193,7 @@ router.get('/other/:id', async (req, res) => {
 });
 
 router.post('/forget-password', async (req, res) => {
+   // #swagger.ignore = true
   const { error } = phoneApiBodyValidate(req.body);
 
   if (error) return res.status(400).send({ message: error.details[0].message });
@@ -256,31 +260,25 @@ router.put('/change-password', auth, async (req, res) => {
 });
 
 router.post('/send-code', async (req, res) => {
-  const { phone } = req.body;
+  
+  const { email } = req.body;
 
   try {
-    const existingUser = await User.findOne({ phone });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(409).json({ error: lang2["phonealready"]  });
+      return res.status(409).json({ error: 'Email already exist'  });
     }
-
     const verificationCode = generateCode();
-    await phoneservice(phone, verificationCode)
 
-    // const expiresAt = moment().add(60, 'minutes').toDate();
-    const existingTempUser = await TempUser.findOne({ phone });
-    if (existingTempUser) {
-      await TempUser.findByIdAndUpdate(existingTempUser._id, { code: verificationCode, })
-    } else {
-      const tempVerification = new TempUser({ phone, code: verificationCode });
-      await tempVerification.save();
-    }
+    await sendEmail(email, verificationCode)
+  
+    await User.findOneAndUpdate({ email }, { code: verificationCode });
 
-    return res.json({ message:lang2["sendcode"]});
+    return res.json({ message:'Code send'});
   } catch (error) {
     console.error('Error sending verification code:', error);
-    return res.status(500).json({ error: lang2["error"]});
+    return res.status(500).json({ error: lang["error"]});
   }
 });
 
@@ -390,7 +388,7 @@ router.get('/trainers', auth, async (req, res) => {
   if (req.params.id) {
     query._id = { $lt: req.params.id };
   }
-  // query.user = userId
+  query.availability = true
 
   const pageSize = 10;
 
@@ -502,6 +500,7 @@ router.post('/check-email', async (req, res) => {
 });
 
 router.post('/check-phone', async (req, res) => {
+   // #swagger.ignore = true
   const { error } = phoneApiBodyValidate(req.body);
   if (error) return res.status(400).send({ success: false, message: error.details[0].message });
 
@@ -515,39 +514,23 @@ router.post('/check-phone', async (req, res) => {
 
 router.put('/update-user', auth, async (req, res) => {
   const {
-    fname,
-    lname,
+    name,
     email,
-    phone,
+    password,
     image,
-    selfiId,
-    idFront,
-    idBack,
-    profession,
-    profession_detail,
     location,
-    age,
-    type,
-    noti
+    fcmtoken
   } = req.body;
 
   // Create an object to store the fields to be updated
   const updateFields = Object.fromEntries(
     Object.entries({
-      fname,
-      lname,
+      name,
       email,
-      phone,
+      password,
       image,
-      selfiId,
-      idFront,
-      idBack,
-      profession,
-      profession_detail,
       location,
-      age,
-      type,
-      noti
+      fcmtoken
     }).filter(([key, value]) => value !== undefined)
   );
 
@@ -576,46 +559,7 @@ router.put('/update-lang', auth, async (req, res) => {
   res.send({ success: true, message:req.user.lang=='spanish'?lang2["userupdate"]:lang["userupdate"], user, token });
 });
 
-router.post('/add-bank', auth, async (req, res) => {
-  const {acc_title,bank_name,number} = req.body;
 
-  const user = await User.findById(req.user._id);
-
-  if (!user) return res.status(404).send({ success: false, message: req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
-
-  const bankdetail = new BankDetail({
-    user: req.user._id,
-    acc_title: acc_title,
-    bank_name,number
-  });
-  await bankdetail.save();
-
-  res.send({ success: true, message: req.user.lang=='spanish'?lang2["bankadded"]:lang["bankadded"], bankdetail:bankdetail });
-});
-
-router.put('/update-bank/:id', auth, async (req, res) => {
-  const {acc_title,bank_name,number} = req.body;
-  
-  const bankdetail = await BankDetail.findOneAndUpdate({_id:req.params.id,user:req.user._id},{acc_title: acc_title,bank_name,number},{new:true});
-
-  if (!bankdetail) return res.status(404).send({ success: false, message: req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
-
-  res.send({ success: true, message: req.user.lang=='spanish'?lang2["bankupdate"]:lang["bankupdate"], bankdetail:bankdetail });
-});
-router.delete('/bank/:id', auth, async (req, res) => {  
-  const bankdetail = await BankDetail.findOneAndDelete({_id:req.params.id,user:req.user._id});
-
-  if (!bankdetail) return res.status(404).send({ success: false, message: req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
-
-  res.send({ success: true, message: req.user.lang=='spanish'?lang2["bankdelete"]:lang["bankdelete"], bankdetail:bankdetail });
-});
-
-router.get('/bank-details', auth, async (req, res) => {
-
-  const bankdetails = await BankDetail.find({user: req.user._id});
-
-  res.send({ success:bankdetails.length==0?false:true, bankdetails:bankdetails });
-});
 
 router.put('/update/:id/:status', [auth,admin], async (req, res) => {
  
@@ -645,10 +589,13 @@ router.delete('/:id', [auth,admin], async (req, res) => {
 });
 
 router.post('/payment-intent', async (req, res) => {
+     // #swagger.ignore = true
   console.log("DD",process.env.STRIPE_SECRET)
   const { amount } = req.body;
   let currency = 'USD';
   let finalAm = parseFloat(amount)*100
+  console.log("Final amount",finalAm);
+  
   try {
     const paymentIntent = await stripe.paymentIntents.create({
      amount:finalAm,

@@ -11,17 +11,25 @@ const bookSessionSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  bookedDate:{
+  bookedDate: {
     type: Date,
   },
-  bookedSlot:{
+  bookedSlot: {
     type: String,
   },
-  sessionType:{
+  sessionType: {
     type: String,
   },
-  message:{
+  message: {
     type: String,
+  },
+  amount: {
+    type: Number,
+  },
+  status: {
+    type: String,
+    default: 'pending',
+    enum: ['pending', 'ongoing', "completed"]
   },
   createdAt: {
     type: Date,

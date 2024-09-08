@@ -2,11 +2,12 @@ const express = require('express');
 const Wallet = require('../models/Wallet');
 const Transaction = require('../models/Transaction');
 const admin = require('../middleware/admin');
+const auth = require('../middleware/auth');
 const router = express.Router();
 const lang2 = require('./lang2.json');
 const lang = require('./lang.json');
 
-router.get('/balance', async (req, res) => {
+router.get('/balance',auth, async (req, res) => {
   const userId=req.user._id;
   const wallet=await Wallet.findOne({user:userId}).lean();
 
@@ -26,7 +27,7 @@ router.get('/balance', async (req, res) => {
     wallet
   });
 });
-router.put('/add', async (req, res) => {
+router.put('/add',auth, async (req, res) => {
   const userId=req.user._id;
   const {balance}=req.body
   const wallet=await Wallet.findOne({user:userId});
@@ -62,7 +63,7 @@ router.put('/add', async (req, res) => {
   });
 });
 
-router.put('/withdraw', async (req, res) => {
+router.put('/withdraw',auth, async (req, res) => {
   const userId=req.user._id;
   const {balance,bankdetailId}=req.body
   const wallet=await Wallet.findOne({user:userId});
@@ -94,7 +95,7 @@ router.put('/withdraw', async (req, res) => {
   });
 });
 
-router.get('/transactions/:type/:id?', async (req, res) => {
+router.get('/transactions/:type/:id?',auth, async (req, res) => {
   const userId=req.user._id;
   let query = {};
 
@@ -114,7 +115,7 @@ router.get('/transactions/:type/:id?', async (req, res) => {
   });
 });
 
-router.put('/admin/update/:id',admin, async (req, res) => {
+router.put('/admin/update/:id',auth,admin, async (req, res) => {
   const transactionId=req.params.id
 
   const {receipt}=req.body
@@ -131,7 +132,7 @@ router.put('/admin/update/:id',admin, async (req, res) => {
   });
 });
 
-router.get('/admin/:id/:transtype/:type?',admin, async (req, res) => {
+router.get('/admin/:id/:transtype/:type?',auth,admin, async (req, res) => {
   let query = {};
 
   const lastId = parseInt(req.params.id)||1;

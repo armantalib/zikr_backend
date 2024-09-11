@@ -262,36 +262,6 @@
         }
       }
     },
-    "/api/users/verify-otp/registration": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "phone": {
-                  "example": "any"
-                },
-                "code": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/api/users/signup/{type}": {
       "post": {
         "description": "",

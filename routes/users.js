@@ -21,18 +21,18 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET);
 
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.user._id).select('-password').populate("profession")
+  const user = await User.findById(req.user._id).select('-password')
   let query = {};
   if (user.type == 'buyer') {
     query.to_id = user._id
   } else {
     query.user = user._id
   }
-  const totalOrder = await Application.find(query).lean()
-  const completed = await Application.find(query).lean()
-  const active = await Application.find(query).lean()
-  const cancelled = await Application.find(query).lean()
-  res.send({ success: true, user, total: totalOrder.length, completed: completed.length, active: active.length, cancelled: cancelled.length });
+  // const totalOrder = await Application.find(query).lean()
+  // const completed = await Application.find(query).lean()
+  // const active = await Application.find(query).lean()
+  // const cancelled = await Application.find(query).lean()
+  res.send({ success: true, user });
 });
 
 router.get('/dashboard', auth, async (req, res) => {
@@ -275,7 +275,7 @@ router.post('/send-code', async (req, res) => {
   
     await User.findOneAndUpdate({ email }, { code: verificationCode });
 
-    return res.json({ message:'Code send'});
+    return res.json({ message:'Code send',code:verificationCode});
   } catch (error) {
     console.error('Error sending verification code:', error);
     return res.status(500).json({ error: lang["error"]});
@@ -283,6 +283,7 @@ router.post('/send-code', async (req, res) => {
 });
 
 router.post('/verify-otp/registration', async (req, res) => {
+   // #swagger.ignore = true
   try {
     const { phone, code } = req.body;
 

@@ -391,7 +391,7 @@ router.get('/trainers', auth, async (req, res) => {
   }
   query.availability = true
 
-  const pageSize = 10;
+  const pageSize = 20;
 
   try {
     const data = await userAvailability.find(query).populate("user")

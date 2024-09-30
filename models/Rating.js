@@ -9,9 +9,14 @@ const ratingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  gig: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Gig'
+  session: {
+  type: mongoose.Schema.Types.ObjectId,
+    ref: 'session'
+  },
+  user_type: {
+    type: String,
+    required: true,
+    enum: ['student', 'trainer']
   },
   review: {
     type: String,

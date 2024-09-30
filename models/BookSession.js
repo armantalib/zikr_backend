@@ -29,9 +29,14 @@ const bookSessionSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'pending',
-    enum: ['pending', 'ongoing', "completed"]
+    enum: ['pending', 'started', "completed","cancelled"]
   },
   createdAt: {
+    type: Date,
+    default: Date.now,
+    index: true
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
     index: true

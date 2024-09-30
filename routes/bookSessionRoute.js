@@ -9,6 +9,7 @@ router.post('/create',auth, bookSession.create);
 router.get('/slots/:userId/:date',auth, bookSession.getSlotsData);
 router.get('/tutor/:status/:date?',auth, bookSession.getAllSessionTrainer);
 router.get('/student/:status/:date?',auth, bookSession.getAllSessionStudent);
+router.put('/update/:status/:id',auth, bookSession.updateBookSession);
 
 
 // router.get('/buyer/:status/:id?', applicationController.getAllEmployeeApplication);

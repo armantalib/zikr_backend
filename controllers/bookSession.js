@@ -178,4 +178,28 @@ exports.getAllSessionStudent = async (req, res) => {
   }
 };
 
+exports.updateBookSession = async (req, res) => {
+  try {
+    const {id,status} = req.params;
+console.log(id,status);
+
+    const data = await BookSession.findOneAndUpdate(
+      { _id: id },
+      {
+        status: status,
+        updatedAt: Date.now()
+      },
+    );
+
+    if (data == null) {
+      return res.status(404).json({ message: 'Session not updated',});
+    }
+
+    res.status(200).json({ success:true,message: 'Session updated successfully', data: data });
+
+  } catch (error) {
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"], });
+  }
+};
+
 

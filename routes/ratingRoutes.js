@@ -5,8 +5,7 @@ const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 router.post('/create', auth, ratingController.createRating);
-router.get('/all/:gigId/:id?', ratingController.getUserPosts);
-router.get('/user/:userId/:id?', ratingController.getUserRatings);
+router.get('/user/:userId/:id?',auth, ratingController.getUserRatings);
 router.delete('/:id',[auth,admin], ratingController.deleterating);
 
 module.exports = router;

@@ -357,6 +357,8 @@ router.post('/trainer/availability', auth,async (req, res) => {
       hours,
     } = req.body;
 
+   const data = await userAvailability.findOne({user: req.user._id});
+   if (!data) return res.status(404).send({ success: false, message:'Availbility Already exist please update information' });
     const saveData = new userAvailability({
       user:req.user._id,
       teach,
@@ -390,15 +392,15 @@ router.get('/trainers', auth, async (req, res) => {
     query._id = { $lt: req.params.id };
   }
   query.availability = true
-
+  query.user = { $ne: null }
   const pageSize = 20;
 
   try {
-    const data = await userAvailability.find(query).populate("user")
+    const data = await userAvailability.find(query).populate('user')
       .sort({ _id: -1 })
       .limit(pageSize)
       .lean();
-
+    
     if (data.length > 0) {
       res.status(200).json({ success: true, data: data });
     } else {
@@ -590,8 +592,7 @@ router.delete('/:id', [auth,admin], async (req, res) => {
 });
 
 router.post('/payment-intent', async (req, res) => {
-     // #swagger.ignore = true
-  console.log("DD",process.env.STRIPE_SECRET)
+
   const { amount } = req.body;
   let currency = 'USD';
   let finalAm = parseFloat(amount)*100

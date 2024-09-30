@@ -7,6 +7,8 @@ const messageRoutes = require('../routes/messageRoutes');
 const notificationRoute = require('../routes/notificationRoute');
 const walletRoute = require('../routes/walletRoute');
 const bookSessionRoute = require('../routes/bookSessionRoute');
+const ratingRoutes = require('../routes/ratingRoutes');
+const hajjUmrahRoute = require('../routes/hajjUmrahRoute');
 
 
 
@@ -18,7 +20,6 @@ const bookSessionRoute = require('../routes/bookSessionRoute');
 // const offerRoute = require('../routes/offerRoute');
 // const requestRoute = require('../routes/requestRoute');
 // const applicationRoute = require('../routes/applicationRoute');
-// const ratingRoutes = require('../routes/ratingRoutes');
 // const uploadImages = require('../routes/uploadImages');
 // const catRoute = require('../routes/catRoute');
 // const supportRoute = require('../routes/supportRoute');
@@ -32,6 +33,8 @@ module.exports = function (app) {
   app.use('/api/notification', notificationRoute);
   app.use('/api/wallet', walletRoute);
   app.use('/api/session', bookSessionRoute);
+  app.use('/api/rating', ratingRoutes);
+  app.use('/api/general', hajjUmrahRoute);
 
 
 

@@ -2,6 +2,7 @@ const BookSession = require("../models/BookSession");
 const BookSlots = require("../models/BookSlots");
 const Transaction = require("../models/Transaction");
 const Wallet = require("../models/Wallet");
+const Rating = require("../models/Rating");
 const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
 const lang2 = require('../routes/lang2.json');
@@ -135,8 +136,18 @@ exports.getAllSessionTrainer = async (req, res) => {
       .limit(pageSize)
       .lean();
 
+      const mData = await Promise.all(
+        data.map(async (item) => {
+          const session_r = await Rating.findOne({ to_id: userId, session: item._id }).lean(); // assuming 'dua' field corresponds to item._id
+          return {
+            ...item,
+            feedback: session_r || null // Add the found dua_d or null if not found
+          };
+        })
+      );
+
     if (data.length > 0) {
-      res.status(200).json({ success: true, data });
+      res.status(200).json({ success: true, data:mData });
     } else {
       res.status(200).json({ success: false, data: [], message: 'No Session Found' });
     }

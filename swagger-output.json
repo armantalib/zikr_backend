@@ -640,9 +640,6 @@
                 "email": {
                   "example": "any"
                 },
-                "password": {
-                  "example": "any"
-                },
                 "image": {
                   "example": "any"
                 },

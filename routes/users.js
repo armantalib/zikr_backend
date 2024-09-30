@@ -345,6 +345,8 @@ router.post('/signup/:type', async (req, res) => {
   const token = generateAuthToken(newUser._id,newUser.type,newUser.lang);
   res.send({ success: true,statusCode:200, message: lang2["acc_create"], token: token, user: newUser });
 });
+
+
 //  trainer availability
 router.post('/trainer/availability', auth,async (req, res) => {
   try {
@@ -519,7 +521,6 @@ router.put('/update-user', auth, async (req, res) => {
   const {
     name,
     email,
-    password,
     image,
     location,
     fcmtoken
@@ -530,7 +531,6 @@ router.put('/update-user', auth, async (req, res) => {
     Object.entries({
       name,
       email,
-      password,
       image,
       location,
       fcmtoken
@@ -609,8 +609,7 @@ router.post('/payment-intent', async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
-    console.log("E",error);
-    
+  
     res.status(500).send({
       error: error.message,
     });

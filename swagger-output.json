@@ -2004,6 +2004,9 @@
                 },
                 "sub_title": {
                   "example": "any"
+                },
+                "sub_data": {
+                  "example": "any"
                 }
               }
             }
@@ -2399,6 +2402,99 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/general/settings": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notification_reminder": {
+                  "example": "any"
+                },
+                "azan_voice": {
+                  "example": "any"
+                },
+                "namaz_timing": {
+                  "example": "any"
+                },
+                "azan_voice_switch": {
+                  "example": "any"
+                },
+                "location": {
+                  "example": "any"
+                },
+                "juma_time": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "440": {
+            "description": ""
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "440": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/image/upload": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }

@@ -7,6 +7,7 @@ const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
 const lang2 = require('../routes/lang2.json');
 const lang = require('../routes/lang.json');
+const moment = require('moment');
 const { notificationAdminService } = require("./notificationAdminService");
 
 function totalAmount(number) {
@@ -108,7 +109,8 @@ exports.create = async (req, res) => {
   }
 };
 exports.getSlotsData = async (req, res) => {
-  const { userId, date } = req.params
+  const { userId, date } = req.params;
+
   const data = await BookSlots.findOne({ user: userId, date: date }).populate("user");
   res.send({ success: data ? true : false, data });
 }

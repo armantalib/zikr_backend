@@ -18,6 +18,10 @@ router.get('/dua/fav/:id?', [auth], hajjUmrahController.getFavDuaApp);
 router.post('/quran/fav', [auth], hajjUmrahController.favQCreate);
 router.get('/quran/fav/:id?', [auth], hajjUmrahController.getFavQApp);
 
+router.post('/settings', [auth], hajjUmrahController.settingUpdate);
+router.get('/settings', [auth], hajjUmrahController.getSettings);
+
+
 
 
 

@@ -2,6 +2,7 @@ const HajjUmrah = require("../models/HajjUmrah");
 const Duas = require("../models/Duas");
 const Favorite = require("../models/Favorite1");
 const FavDua = require("../models/FavDua");
+const Settings = require("../models/Settings");
 
 const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
@@ -12,14 +13,14 @@ const { notificationAdminService } = require("./notificationAdminService");
 
 exports.create = async (req, res) => {
   try {
-    const { title, desc, image, sub_title } = req.body;
+    const { title, desc, image, sub_title,sub_data } = req.body;
     const data = new HajjUmrah({
-      title, desc, image, sub_title
+      title, desc, image, sub_title,sub_data
     });
     await data.save();
     res.send({ success: true, data: data });
   } catch (error) {
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 exports.duaCreate = async (req, res) => {
@@ -75,6 +76,49 @@ exports.favDuaCreate = async (req, res) => {
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
   }
 };
+
+exports.settingUpdate = async (req, res) => {
+  try {
+    const { notification_reminder,azan_voice,namaz_timing, azan_voice_switch,location,juma_time} = req.body;
+    const user = req.user._id;
+    const setting = await Settings.findOne({ user: user}).lean()
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        notification_reminder,azan_voice,namaz_timing, azan_voice_switch,location,juma_time
+      }).filter(([key, value]) => value !== undefined)
+    );
+    // Check if there are any fields to update
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: req.user.lang=='spanish'?lang["novalid"]:lang["novalid"]  });
+    }
+
+   let data = null
+    if(setting){
+       data = await Settings.findByIdAndUpdate(setting?._id, updateFields, {
+        new: true
+      });
+    }else{
+     data = new Settings({
+      ...updateFields,
+      user:user
+    });
+    await data.save();
+  }
+    res.send({ success: true, data: data });
+  } catch (error) {
+    // console.log("E",error);
+    
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+  }
+};
+exports.getSettings = async (req, res) => {
+  try {
+    const data = await Settings.findOne({user: req.user._id}).populate("user");
+    res.send({ success:data.length==0?false:true, data });
+  } catch (error) {
+    
+  }
+}
 
 exports.getHajjUmrahApp = async (req, res) => {
   let query = {};

@@ -10,26 +10,26 @@ const lang2 = require('./routes/lang2.json');
 const { default: axios } = require('axios');
 
 
-// const admin = require("firebase-admin");
+const admin = require("firebase-admin");
 
-// const config = {
-//   "type": process.env.TYPE,
-//   "project_id":process.env.PROJECTID,
-//   "private_key_id": process.env.PRIVATE_KEY_ID,
-//   "private_key":process.env.PRIVATE_KEY,
-//   "client_email":process.env.CLIENT_EMAIL,
-//   "client_id": process.env.CLIENTID,
-//   "auth_uri": process.env.AUTH_URI,
-//   "token_uri": process.env.TOKEN_URL,
-//   "auth_provider_x509_cert_url":process.env.AUTHPROVIDER,
-//   "client_x509_cert_url": process.env.CLIENT_CERT,
-//   "universe_domain": process.env.DOMAIN
-//   };
+const config = {
+  "type": process.env.TYPE,
+  "project_id":process.env.PROJECTID,
+  "private_key_id": process.env.PRIVATE_KEY_ID,
+  "private_key":process.env.PRIVATE_KEY,
+  "client_email":process.env.CLIENT_EMAIL,
+  "client_id": process.env.CLIENTID,
+  "auth_uri": process.env.AUTH_URI,
+  "token_uri": process.env.TOKEN_URL,
+  "auth_provider_x509_cert_url":process.env.AUTHPROVIDER,
+  "client_x509_cert_url": process.env.CLIENT_CERT,
+  "universe_domain": process.env.DOMAIN
+  };
   
-  // admin.initializeApp({
-  //   credential: admin.credential.cert(config),
-  //   storageBucket: "gs://trabojos-648e6.appspot.com"
-  // });
+  admin.initializeApp({
+    credential: admin.credential.cert(config),
+    storageBucket: "gs://zikr_bucket"
+  });
   
   app.use(cors());
 
@@ -38,6 +38,7 @@ require('./startup/logging')();
 require('./startup/routes')(app);
 require('./startup/db')();
 require('./startup/validation')();
+require('./startup/cron')();
 
 // Middleware to parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));

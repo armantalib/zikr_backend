@@ -13,9 +13,18 @@ const hajjUmrah = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sub_data: [{
+    title: {
+      type: String,
+    },
+    desc: {
+      type: String,
+    },
+  }
+],
   image: {
     type: String,
-    required: true,
+
   },
   createdAt: {
     type: Date,

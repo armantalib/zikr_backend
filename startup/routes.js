@@ -20,7 +20,7 @@ const hajjUmrahRoute = require('../routes/hajjUmrahRoute');
 // const offerRoute = require('../routes/offerRoute');
 // const requestRoute = require('../routes/requestRoute');
 // const applicationRoute = require('../routes/applicationRoute');
-// const uploadImages = require('../routes/uploadImages');
+const uploadImages = require('../routes/uploadImages');
 // const catRoute = require('../routes/catRoute');
 // const supportRoute = require('../routes/supportRoute');
 // const payment = require('../routes/PayRoute');
@@ -37,8 +37,7 @@ module.exports = function (app) {
   app.use('/api/general', hajjUmrahRoute);
 
 
-
-  // app.use('/api/image', uploadImages);
+  app.use('/api/image', uploadImages);
 
   // app.use('/api/cat', catRoute);
   // app.use('/api/training', trainingRoute);

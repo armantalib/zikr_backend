@@ -546,8 +546,8 @@ router.put('/update-user', auth, async (req, res) => {
   });
 
   if (!user) return res.status(404).send({ success: false, message:req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
-
-  res.send({ success: true, message: req.user.lang=='spanish'?lang2["userupdate"]:lang["userupdate"], user });
+  const availability = await userAvailability.findOne({ user:user?._id });
+  res.send({ success: true, message: req.user.lang=='spanish'?lang2["userupdate"]:lang["userupdate"], user,availability });
 });
 
 router.put('/update-lang', auth, async (req, res) => {

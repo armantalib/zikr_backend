@@ -360,7 +360,7 @@ router.post('/trainer/availability', auth,async (req, res) => {
     } = req.body;
 
    const data = await userAvailability.findOne({user: req.user._id});
-   if (!data) return res.status(404).send({ success: false, message:'Availbility Already exist please update information' });
+   if (data) return res.status(404).send({ success: false, message:'Availability Already exist please update information' });
     const saveData = new userAvailability({
       user:req.user._id,
       teach,

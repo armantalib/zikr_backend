@@ -88,8 +88,8 @@ router.get('/totalUnseens/:type', auth, async (req, res) => {
   });
 });
 
-router.get('/all/:type/:id/:search?', [auth,admin], async (req, res) => {
-   // #swagger.ignore = true
+router.get('/admin/all/:type/:id/:search?', [auth,admin], async (req, res) => {
+
   const lastId = parseInt(req.params.id)||1;
 
   // Check if lastId is a valid number

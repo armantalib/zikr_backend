@@ -43,7 +43,6 @@ router.get('/admin/dashboard', auth, async (req, res) => {
   const session = await BookSession.countDocuments({})
   const pendingSession = await BookSession.countDocuments({status:"pending"})
   const completedSession = await BookSession.countDocuments({status:"completed"})
-  const orders = await Application.countDocuments({})
   res.send({
     success: true,
    totalUsers:totalStudents+totalTrainer,

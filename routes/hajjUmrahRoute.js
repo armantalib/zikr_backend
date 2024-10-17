@@ -5,10 +5,14 @@ const admin = require('../middleware/admin');
 const auth = require('../middleware/auth');
 
 router.post('/admin/hajj/create', [auth, admin], hajjUmrahController.create);
+router.put('/admin/hajj/update', [auth, admin], hajjUmrahController.updateHajjUmrah);
+router.delete('/admin/hajj', [auth, admin], hajjUmrahController.deleteHajjUmrah);
 router.get('/admin/hajj/:id/:search?', [auth, admin], hajjUmrahController.getAllHajjUmrahAdmin);
 router.get('/hajj/all/:id?', [auth], hajjUmrahController.getHajjUmrahApp);
 
 router.post('/admin/dua/create', [auth, admin], hajjUmrahController.duaCreate);
+router.put('/admin/dua/update', [auth, admin], hajjUmrahController.updateDua);
+router.delete('/admin/dua', [auth, admin], hajjUmrahController.deleteDua);
 router.get('/admin/dua/:id/:search?', [auth, admin], hajjUmrahController.getAllDuaAdmin);
 router.get('/dua/all/:id?', [auth], hajjUmrahController.getDuaApp);
 

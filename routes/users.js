@@ -10,6 +10,7 @@ const router = express.Router();
 const moment = require('moment');
 const { TempUser } = require('../models/TempUser');
 const userAvailability = require('../models/userAvailability')
+const BookSession = require('../models/BookSession')
 const Notification = require('../models/Notification');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
@@ -35,67 +36,22 @@ router.get('/me', auth, async (req, res) => {
   res.send({ success: true, user });
 });
 
-router.get('/dashboard', auth, async (req, res) => {
-  // Calculate the start date (today)
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set time to the beginning of the day
 
-  // Calculate the end date (one month ago)
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-  oneMonthAgo.setHours(0, 0, 0, 0); // Set time to the beginning of the day
-
-  const oneMonthOrders = await Application.find({
-    user: req.user._id, status: "completed",
-    createdAt: { $gte: oneMonthAgo, $lte: today }
-  }).lean()
-
-  const completedOrders = await Application.countDocuments({
-    user: req.user._id, status: "completed",
-  })
-
-  const pendingOrders = await Application.countDocuments({
-    user: req.user._id, status: "pending",
-  })
-
-  const activeOrders = await Application.countDocuments({
-    user: req.user._id, status: "accepted",
-  })
-
-  const totalOrders = await Application.find({
-    user: req.user._id,
-    status: "completed",
-  }).lean()
-
-  const totalPriceSum = totalOrders.reduce((sum, order) => sum + order.bid_price, 0);
-  const oneMonthAgoSum = oneMonthOrders.reduce((sum, order) => sum + order.bid_price, 0);
-
-  res.send({
-    success: true,
-    totalEarning: totalPriceSum,
-    oneMonthAgoEarning: oneMonthAgoSum,
-    totalOrders: totalOrders.length,
-    completedOrders: completedOrders,
-    pendingOrders: pendingOrders,
-    activeOrders: activeOrders,
-  });
-});
 router.get('/admin/dashboard', auth, async (req, res) => {
-  const buyeruser=await User.countDocuments({type:"buyer",status : 'online'})
-  const selleruser=await User.countDocuments({type:"seller",status :'online'})
-  const Gigs = await Gig.countDocuments({})
-  const offer = await Offer.countDocuments({})
-  const requests = await Request.countDocuments({})
+  const totalStudents=await User.countDocuments({type:"student",status : 'online'})
+  const totalTrainer=await User.countDocuments({type:"trainer",status :'online'})
+  const session = await BookSession.countDocuments({})
+  const pendingSession = await BookSession.countDocuments({status:"pending"})
+  const completedSession = await BookSession.countDocuments({status:"completed"})
   const orders = await Application.countDocuments({})
   res.send({
     success: true,
-   totalUsers:selleruser+buyeruser,
-   sellerUsers:selleruser,
-   buyerUsers:buyeruser,
-   totalGigs:Gigs,
-   totalOffer:offer,
-   totalRequest:requests,
-   totalOrder:orders,
+   totalUsers:totalStudents+totalTrainer,
+   studens:totalStudents,
+   tutors:totalTrainer,
+   totalSession:session,
+   pendingSession:pendingSession,
+   completedSession:completedSession,
   });
 });
 
@@ -164,7 +120,7 @@ router.get('/all/:type/:id/:search?', [auth,admin], async (req, res) => {
     query.$or = searchQuery
   }
 
-  const users = await User.find(query).select('-password').populate("profession").sort({ _id: -1 }).skip(skip)
+  const users = await User.find(query).select('-password').sort({ _id: -1 }).skip(skip)
   .limit(pageSize).lean();
 
   const totalCount = await User.countDocuments(query);
@@ -572,7 +528,7 @@ router.put('/update/:id/:status', [auth,admin], async (req, res) => {
 
   if (!user) return res.status(404).send({ success: false, message: req.user.lang=='spanish'?lang2["nouserfound"]:lang["nouserfound"] });
 
-  res.send({ success: true, message: req.user.lang=='spanish'?lang2["userupdate"]:lang["userupdate"], user });
+  res.send({ success: true, message: req.user.lang=='spanish'?lang["userupdate"]:lang["userupdate"], user });
 });
 
 router.delete('/', auth, async (req, res) => {

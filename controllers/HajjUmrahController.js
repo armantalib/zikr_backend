@@ -23,6 +23,33 @@ exports.create = async (req, res) => {
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
+exports.updateHajjUmrah = async (req, res) => {
+  try {
+    const {
+      title, desc, image, sub_title,sub_data,
+      id
+    } = req.body;
+
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        title, desc, image, sub_title,sub_data
+      }).filter(([key, value]) => value !== undefined)
+    );
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: 'Please send correct data' });
+    }  
+    const data = await HajjUmrah.findByIdAndUpdate(id, updateFields, {
+      new: true
+    });
+  
+    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
+  
+    res.send({ success: true, message: 'Update data successfully', data });
+
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
+  }
+};
 exports.duaCreate = async (req, res) => {
   try {
     const { title, arabic, english } = req.body;
@@ -33,6 +60,34 @@ exports.duaCreate = async (req, res) => {
     res.send({ success: true, data: data });
   } catch (error) {
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+  }
+};
+
+exports.updateDua = async (req, res) => {
+  try {
+    const {
+      title, arabic, english,
+      id
+    } = req.body;
+
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        title, arabic, english,
+      }).filter(([key, value]) => value !== undefined)
+    );
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: 'Please send correct data' });
+    }  
+    const data = await Duas.findByIdAndUpdate(id, updateFields, {
+      new: true
+    });
+  
+    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
+  
+    res.send({ success: true, message: 'Update data successfully', data });
+
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
   }
 };
 
@@ -350,6 +405,40 @@ exports.updateBookSession = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: req?.user?.lang == 'english' ? lang["error"] : lang["error"], });
+  }
+};
+
+exports.deleteHajjUmrah = async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+
+    const service = await HajjUmrah.findByIdAndDelete(serviceId);
+
+    if (service == null) {
+      return res.status(404).json({ message: 'Data not found'});
+    }
+
+    res.status(200).json({ message:'Data deleted Successfully', data: service });
+
+  } catch (error) {
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang2["error"] });
+  }
+};
+
+exports.deleteDua = async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+
+    const service = await Duas.findByIdAndDelete(serviceId);
+
+    if (service == null) {
+      return res.status(404).json({ message: 'Data not found'});
+    }
+
+    res.status(200).json({ message:'Data deleted Successfully', data: service });
+
+  } catch (error) {
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang2["error"] });
   }
 };
 

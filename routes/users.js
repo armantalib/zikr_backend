@@ -343,7 +343,7 @@ router.post('/signup/:type', async (req, res) => {
   await User.findOneAndUpdate({ email }, { code: verificationCode });
   
   const token = generateAuthToken(newUser._id,newUser.type,newUser.lang);
-  res.send({ success: true,statusCode:200, message: lang2["acc_create"], token: token, user: newUser });
+  res.send({ success: true,statusCode:200, message: lang2["acc_create"], token: token, user: newUser,trainerDocs:false });
 });
 
 
@@ -372,7 +372,8 @@ router.post('/trainer/availability', auth,async (req, res) => {
     });
     await saveData.save();
 
-    res.send({ success: true,statusCode:200, message: lang["acc_create"],  data: saveData });
+    const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
+    res.send({ success: true,statusCode:200, message: lang["acc_create"],  data: saveData,trainerDocs:mData });
   } catch (error) {
     return res.status(500).json({ error: lang["error"] });
   }

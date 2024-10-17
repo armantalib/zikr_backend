@@ -452,8 +452,9 @@ router.put('/trainer/availability', auth,async (req, res) => {
     });
   
     if (!data) return res.status(404).send({ success: false, message:lang["nouserfound"] });
+    const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
   
-    res.send({ success: true, message: 'Update data successfully', data });
+    res.send({ success: true, message: 'Update data successfully', data,trainerDocs:mData });
 
   } catch (error) {
     return res.status(500).json({ error: lang["error"] });

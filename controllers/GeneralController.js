@@ -300,14 +300,14 @@ exports.getAllHajjUmrahAdmin = async (req, res) => {
   if (req.params.search) {
     query.name = { $regex: new RegExp(req.params.search, 'i') };
   }
-  query.user = userId
+  // query.user = userId
 
   try {
     const data = await HajjUmrah.find(query).skip(skip)
       .limit(pageSize).lean();
 
-    const totalCount = await HajjUmrah.find(query);
-    const totalPages = Math.ceil(totalCount.length / pageSize);
+      const totalCount = await HajjUmrah.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / pageSize);
 
     if (data.length > 0) {
       res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });
@@ -335,14 +335,14 @@ exports.getAllDuaAdmin = async (req, res) => {
   if (req.params.search) {
     query.name = { $regex: new RegExp(req.params.search, 'i') };
   }
-  query.user = userId
+  // query.user = userId
 
   try {
     const data = await Duas.find(query).skip(skip)
       .limit(pageSize).lean();
 
-    const totalCount = await Duas.find(query);
-    const totalPages = Math.ceil(totalCount.length / pageSize);
+    const totalCount = await Duas.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / pageSize);
 
     if (data.length > 0) {
       res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });

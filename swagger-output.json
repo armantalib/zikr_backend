@@ -2117,10 +2117,16 @@
         }
       }
     },
-    "/api/general/admin/hajj": {
+    "/api/general/admin/hajj/{id}": {
       "delete": {
         "description": "",
         "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "x-auth-token",
             "in": "header",
@@ -2337,10 +2343,16 @@
         }
       }
     },
-    "/api/general/admin/dua": {
+    "/api/general/admin/dua/{id}": {
       "delete": {
         "description": "",
         "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "x-auth-token",
             "in": "header",

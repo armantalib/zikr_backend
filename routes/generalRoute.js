@@ -6,13 +6,13 @@ const auth = require('../middleware/auth');
 
 router.post('/admin/hajj/create', [auth, admin], generalController.create);
 router.put('/admin/hajj/update', [auth, admin], generalController.updateHajjUmrah);
-router.delete('/admin/hajj', [auth, admin], generalController.deleteHajjUmrah);
+router.delete('/admin/hajj/:id', [auth, admin], generalController.deleteHajjUmrah);
 router.get('/admin/hajj/:id/:search?', [auth, admin], generalController.getAllHajjUmrahAdmin);
 router.get('/hajj/all/:id?', [auth], generalController.getHajjUmrahApp);
 
 router.post('/admin/dua/create', [auth, admin], generalController.duaCreate);
 router.put('/admin/dua/update', [auth, admin], generalController.updateDua);
-router.delete('/admin/dua', [auth, admin], generalController.deleteDua);
+router.delete('/admin/dua/:id', [auth, admin], generalController.deleteDua);
 router.get('/admin/dua/:id/:search?', [auth, admin], generalController.getAllDuaAdmin);
 router.get('/dua/all/:id?', [auth], generalController.getDuaApp);
 

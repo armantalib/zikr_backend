@@ -312,7 +312,7 @@ exports.getAllHajjUmrahAdmin = async (req, res) => {
     if (data.length > 0) {
       res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });
     } else {
-      res.status(200).json({ success: false, data: [], message: req.user.lang == 'spanish' ? lang2["no_cat"] : lang["no_cat"], count: { totalPage: totalPages, currentPageSize: data.length } });
+      res.status(200).json({ success: false, data: [], message: 'No more data', count: { totalPage: totalPages, currentPageSize: data.length } });
     }
   } catch (error) {
     res.status(500).json({ message: req.user.lang == 'spanish' ? lang["error"] : lang["error"] });
@@ -347,7 +347,7 @@ exports.getAllDuaAdmin = async (req, res) => {
     if (data.length > 0) {
       res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });
     } else {
-      res.status(200).json({ success: false, data: [], message: req.user.lang == 'spanish' ? lang2["no_cat"] : lang["no_cat"], count: { totalPage: totalPages, currentPageSize: data.length } });
+      res.status(200).json({ success: false, data: [], message: 'No more data', count: { totalPage: totalPages, currentPageSize: data.length } });
     }
   } catch (error) {
     res.status(500).json({ message: req.user.lang == 'spanish' ? lang["error"] : lang["error"] });

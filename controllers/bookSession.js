@@ -3,6 +3,7 @@ const BookSlots = require("../models/BookSlots");
 const Transaction = require("../models/Transaction");
 const Wallet = require("../models/Wallet");
 const Rating = require("../models/Rating");
+const userAvailability = require('../models/userAvailability')
 const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
 const lang2 = require('../routes/lang2.json');
@@ -173,20 +174,30 @@ exports.getAllSessionStudent = async (req, res) => {
   }
   query.user = userId;
 
-  const pageSize = 10;
+  const pageSize = 25;
 
   try {
     const data = await BookSession.find(query).sort({ _id: -1 })
       .populate("user").populate("to_id")
       .limit(pageSize)
       .lean();
-
-    if (data.length > 0) {
-      res.status(200).json({ success: true, data });
+      const mData = await Promise.all(
+        data.map(async (item) => {
+          const trainer = await userAvailability.findOne({ user: item?.to_id}).populate("user").lean(); // assuming 'dua' field corresponds to item._id
+          return {
+            ...item,
+            trainerDocs: trainer || null // Add the found dua_d or null if not found
+          };
+        })
+      );
+      // const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
+    if (mData.length > 0) {
+      res.status(200).json({ success: true, data:mData });
     } else {
       res.status(200).json({ success: false, data: [], message: 'No Session Found' });
     }
   } catch (error) {
+    
     res.status(500).json({ message: lang["error"] });
   }
 };
@@ -194,7 +205,6 @@ exports.getAllSessionStudent = async (req, res) => {
 exports.updateBookSession = async (req, res) => {
   try {
     const {id,status} = req.params;
-console.log(id,status);
 
     const data = await BookSession.findOneAndUpdate(
       { _id: id },

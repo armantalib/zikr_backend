@@ -553,7 +553,6 @@ router.post('/payment-intent', async (req, res) => {
   const { amount } = req.body;
   let currency = 'USD';
   let finalAm = parseFloat(amount)*100
-  console.log("Final amount",finalAm);
   
   try {
     const paymentIntent = await stripe.paymentIntents.create({

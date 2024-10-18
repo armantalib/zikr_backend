@@ -3,13 +3,14 @@ const Duas = require("../models/Duas");
 const Favorite = require("../models/Favorite1");
 const FavDua = require("../models/FavDua");
 const Settings = require("../models/Settings");
+const UsersPrayers = require("../models/UsersPrayers");
 
 const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
 const lang2 = require('../routes/lang2.json');
 const lang = require('../routes/lang.json');
 const { notificationAdminService } = require("./notificationAdminService");
-
+const moment = require('moment');
 
 exports.create = async (req, res) => {
   try {
@@ -107,7 +108,6 @@ exports.favQCreate = async (req, res) => {
   }
     res.send({ success: true, data: data });
   } catch (error) {
-    // console.log("E",error);
     
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
   }
@@ -161,11 +161,14 @@ exports.settingUpdate = async (req, res) => {
   }
     res.send({ success: true, data: data });
   } catch (error) {
-    // console.log("E",error);
     
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
   }
 };
+
+
+
+
 exports.getSettings = async (req, res) => {
   try {
     const data = await Settings.findOne({user: req.user._id}).populate("user");
@@ -387,7 +390,6 @@ exports.getAllSessionStudent = async (req, res) => {
 exports.updateBookSession = async (req, res) => {
   try {
     const { id, status } = req.params;
-    console.log(id, status);
 
     const data = await BookSession.findOneAndUpdate(
       { _id: id },
@@ -439,6 +441,44 @@ exports.deleteDua = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang2["error"] });
+  }
+};
+
+exports.usersPrayers = async (req, res) => {
+  try {
+    const {namaz_name,status, status_text} = req.body;
+    const user = req.user._id;
+    const today = new Date();
+    const startOfToday = new Date(today.setHours(0, 0, 0, 0));  // Start of today
+    const endOfToday = new Date(today.setHours(23, 59, 59, 999));  // End of today
+    const setting = await UsersPrayers.findOne({ user: user,namaz_name:namaz_name,
+      createdAt: { $gte: startOfToday, $lte: endOfToday }
+
+    }).lean()
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        namaz_name,status, status_text
+      }).filter(([key, value]) => value !== undefined)
+    );
+    // Check if there are any fields to update
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: req.user.lang=='spanish'?lang["novalid"]:lang["novalid"]  });
+    }
+
+   let data = null
+    if(setting){
+      return res.status(400).send({ success: false, message: 'You already prayed this prayer'  });
+    }else{
+     data = new UsersPrayers({
+      ...updateFields,
+      user:user
+    });
+    await data.save();
+  }
+    res.send({ success: true, data: data });
+  } catch (error) {
+    
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
   }
 };
 

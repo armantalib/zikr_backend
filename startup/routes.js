@@ -8,7 +8,7 @@ const notificationRoute = require('../routes/notificationRoute');
 const walletRoute = require('../routes/walletRoute');
 const bookSessionRoute = require('../routes/bookSessionRoute');
 const ratingRoutes = require('../routes/ratingRoutes');
-const hajjUmrahRoute = require('../routes/hajjUmrahRoute');
+const generalRoute = require('../routes/generalRoute');
 
 
 
@@ -34,7 +34,7 @@ module.exports = function (app) {
   app.use('/api/wallet', walletRoute);
   app.use('/api/session', bookSessionRoute);
   app.use('/api/rating', ratingRoutes);
-  app.use('/api/general', hajjUmrahRoute);
+  app.use('/api/general', generalRoute);
 
 
   app.use('/api/image', uploadImages);

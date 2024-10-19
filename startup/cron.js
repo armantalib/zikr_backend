@@ -24,12 +24,13 @@ module.exports = async function () {
       console.log("userTime", notificationTime);
       if (element?.notification_reminder?.prayer_alert == true) {
         let prayerObj = element?.namaz_timing;
-
         for (const property in prayerObj) {
-          if (notificationTime == prayerObj[property]) {
-            let title = property + ' Namaz Reminder';
-            let desc = `Pray ${property} prayer`;
-            sendNotificationSound(fcmtoken, title, desc, voiceName)
+          if (property == 'Fajr' || property == 'Dhuhr' || property == 'Asr' || property == 'Maghrib' || property == 'Isha') {            
+            if (notificationTime == prayerObj[property]) {
+              let title = property + ' Namaz Reminder';
+              let desc = `Pray ${property} prayer`;
+              sendNotificationSound(fcmtoken, title, desc, voiceName)
+            }
           }
         }
 
@@ -62,7 +63,7 @@ module.exports = async function () {
       if (element?.notification_reminder?.quran_reminder == false) return
       if (user.fcmtoken == 'null' || user.fcmtoken == undefined || !user.fcmtoken || user.fcmtoken == 'any') return
       const fcmtoken = JSON.parse(user.fcmtoken)
-      
+
       const title = "Quran Pak Reminder";
       const desc = "Take a moment to connect with the words of Allah. Reflect on the guidance and wisdom within. Even one verse today can bring peace and blessings to your heart."
       sendNotificationPush(fcmtoken, title, desc)

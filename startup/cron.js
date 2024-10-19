@@ -39,7 +39,7 @@ module.exports = async function () {
   });
 
 
-  cron.schedule('* */23 * * *', async () => {
+  cron.schedule('0 */23 * * *', async () => {
     const duas = await Duas.find().sort({ _id: -1 })
     const random = Math.floor(Math.random() * duas.length);
     const randomDua = duas[random];
@@ -55,7 +55,7 @@ module.exports = async function () {
   });
 
 
-  cron.schedule('* */14 * * *', async () => {
+  cron.schedule('0 */14 * * *', async () => {
     const users = await Settings.find().sort({ _id: -1 }).populate('user');
     users.forEach((element, index) => {
       const user = element?.user

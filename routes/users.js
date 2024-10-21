@@ -98,7 +98,7 @@ router.get('/admin/all/:type/:id/:search?', [auth,admin], async (req, res) => {
   }
   const {type}=req.params
 
-  const validType=['buyer', 'seller']
+  const validType=['student', 'trainer']
 
   if (!validType.includes(type)) {
    return res.status(400).send({ success: false, message:req.user.lang=='spanish'?lang2["error"]:lang["error"] });

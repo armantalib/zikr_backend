@@ -25,8 +25,8 @@ module.exports = async function () {
       if (element?.notification_reminder?.prayer_alert == true) {
         let prayerObj = element?.namaz_timing;
         for (const property in prayerObj) {
-          if (property == 'Fajr' || property == 'Dhuhr' || property == 'Asr' || property == 'Maghrib' || property == 'Isha') {            
-            if (notificationTime == prayerObj[property]) {
+          if (notificationTime == prayerObj[property]) {
+            if (property == 'Fajr' || property == 'Dhuhr' || property == 'Asr' || property == 'Maghrib' || property == 'Isha') {
               let title = property + ' Namaz Reminder';
               let desc = `Pray ${property} prayer`;
               sendNotificationSound(fcmtoken, title, desc, voiceName)

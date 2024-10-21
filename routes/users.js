@@ -94,14 +94,14 @@ router.get('/admin/all/:type/:id/:search?', [auth,admin], async (req, res) => {
 
   // Check if lastId is a valid number
   if (isNaN(lastId) || lastId < 0) {
-    return res.status(400).json({ error:req.user.lang=='spanish'?lang2["Invalid_last_id"]:lang["Invalid_last_id"] });
+    return res.status(400).json({ error:lang["Invalid_last_id"] });
   }
   const {type}=req.params
 
   const validType=['student', 'trainer']
 
   if (!validType.includes(type)) {
-   return res.status(400).send({ success: false, message:req.user.lang=='spanish'?lang2["error"]:lang["error"] });
+   return res.status(400).send({ success: false, message:lang["error"] });
   }
   const pageSize = 10;
 
@@ -121,12 +121,26 @@ router.get('/admin/all/:type/:id/:search?', [auth,admin], async (req, res) => {
 
   const users = await User.find(query).select('-password').sort({ _id: -1 }).skip(skip)
   .limit(pageSize).lean();
+let mData = users;
+if(type == 'trainer'){
+   mData = await Promise.all(
+    users.map(async (item) => {
+      const session_r = await userAvailability.findOne({ user: item?._id,}).lean(); // assuming 'dua' field corresponds to item._id
+      return {
+        ...item,
+        trainerDocs: session_r || null // Add the found dua_d or null if not found
+      };
+    })
+  );
+}
+
 
   const totalCount = await User.countDocuments(query);
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  res.send({ success: true, users: users,count: { totalPage: totalPages, currentPageSize: users.length } });
+  res.send({ success: true, users: mData,count: { totalPage: totalPages, currentPageSize: users.length } });
 });
+
 
 
 router.get('/other/:id', async (req, res) => {

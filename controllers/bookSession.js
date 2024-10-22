@@ -256,6 +256,7 @@ exports.getAllSessionAdmin = async (req, res) => {
 
   try {
     const data = await BookSession.find(query).skip(skip)
+    .populate("user").populate("to_id")
       .limit(pageSize).lean();
 
     const totalCount = await BookSession.countDocuments(query);

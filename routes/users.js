@@ -109,7 +109,7 @@ router.get('/admin/all/:type/:id/:search?', [auth,admin], async (req, res) => {
   let query = {};
 
   query.type = type;
-  query.status = 'online';
+  // query.status = 'online';
   if (req.params.search) {
     const searchRegex = new RegExp(req.params.search, 'i');
     const searchQuery = [

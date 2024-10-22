@@ -242,14 +242,14 @@ exports.getAllSessionAdmin = async (req, res) => {
   if (req.params.search) {
     query.name = { $regex: new RegExp(req.params.search, 'i') };
   }
-  if (req.params.status) {
+  if (req.params.status && req.params.status !='null') {
     query.status = req.params.status;
   }
-  if (req.params.date) {
+  if (req.params.date && req.params.date !='null') {
     // query.bookedDate = { $gte: startOfToday, $lte: endOfToday }
     query.bookedDate = req.params.date
   }
-  if (req.params.type) {
+  if (req.params.type && req.params.type !='null') {
     query.sessionType = req.params.type;
   }
   // query.user = userId

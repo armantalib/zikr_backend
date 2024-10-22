@@ -1,5 +1,6 @@
 const HajjUmrah = require("../models/HajjUmrah");
 const Duas = require("../models/Duas");
+const DailyAyat = require("../models/DailyAyat");
 const Favorite = require("../models/Favorite1");
 const FavDua = require("../models/FavDua");
 const Settings = require("../models/Settings");
@@ -60,7 +61,20 @@ exports.duaCreate = async (req, res) => {
     await data.save();
     res.send({ success: true, data: data });
   } catch (error) {
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
+  }
+};
+
+exports.dailyAyatCreate = async (req, res) => {
+  try {
+    const { title, arabic, english } = req.body;
+    const data = new DailyAyat({
+      title, arabic, english
+    });
+    await data.save();
+    res.send({ success: true, data: data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
@@ -92,6 +106,34 @@ exports.updateDua = async (req, res) => {
   }
 };
 
+exports.updateDailyAyat = async (req, res) => {
+  try {
+    const {
+      title, arabic, english,
+      id
+    } = req.body;
+
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        title, arabic, english,
+      }).filter(([key, value]) => value !== undefined)
+    );
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: 'Please send correct data' });
+    }  
+    const data = await DailyAyat.findByIdAndUpdate(id, updateFields, {
+      new: true
+    });
+  
+    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
+  
+    res.send({ success: true, message: 'Update data successfully', data });
+
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
+  }
+};
+
 exports.favQCreate = async (req, res) => {
   try {
     const { title, arabic, english, verse_id,verse_key } = req.body;
@@ -109,7 +151,7 @@ exports.favQCreate = async (req, res) => {
     res.send({ success: true, data: data });
   } catch (error) {
     
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 exports.favDuaCreate = async (req, res) => {
@@ -128,7 +170,7 @@ exports.favDuaCreate = async (req, res) => {
     }
     res.send({ success: true, data: data });
   } catch (error) {
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
@@ -162,7 +204,7 @@ exports.settingUpdate = async (req, res) => {
     res.send({ success: true, data: data });
   } catch (error) {
     
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
@@ -284,6 +326,7 @@ exports.getDuaApp = async (req, res) => {
   }
 };
 
+
 exports.getAllHajjUmrahAdmin = async (req, res) => {
   const userId = req.user._id;
 
@@ -339,6 +382,41 @@ exports.getAllDuaAdmin = async (req, res) => {
 
   try {
     const data = await Duas.find(query).skip(skip)
+      .limit(pageSize).lean();
+
+    const totalCount = await Duas.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    if (data.length > 0) {
+      res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });
+    } else {
+      res.status(200).json({ success: false, data: [], message: 'No more data', count: { totalPage: totalPages, currentPageSize: data.length } });
+    }
+  } catch (error) {
+    res.status(500).json({ message: req.user.lang == 'spanish' ? lang["error"] : lang["error"] });
+  }
+};
+
+exports.getAllDailyAyatAdmin = async (req, res) => {
+  const userId = req.user._id;
+
+  const lastId = parseInt(req.params.id) || 1;
+
+  // Check if lastId is a valid number
+  if (isNaN(lastId) || lastId < 0) {
+    return res.status(400).json({ error: req.user.lang == 'spanish' ? lang["invalid"] : lang["invalid"] });
+  }
+  const pageSize = 10;
+
+  const skip = Math.max(0, (lastId - 1)) * pageSize;
+  let query = {};
+  if (req.params.search) {
+    query.name = { $regex: new RegExp(req.params.search, 'i') };
+  }
+  // query.user = userId
+
+  try {
+    const data = await DailyAyat.find(query).skip(skip)
       .limit(pageSize).lean();
 
     const totalCount = await Duas.countDocuments(query);
@@ -423,7 +501,7 @@ exports.deleteHajjUmrah = async (req, res) => {
     res.status(200).json({ message:'Data deleted Successfully', data: service });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang2["error"] });
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
   }
 };
 
@@ -440,7 +518,24 @@ exports.deleteDua = async (req, res) => {
     res.status(200).json({ message:'Data deleted Successfully', data: service });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang2["error"] });
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
+  }
+};
+
+exports.deleteDailyAyat = async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+
+    const service = await DailyAyat.findByIdAndDelete(serviceId);
+
+    if (service == null) {
+      return res.status(404).json({ message: 'Data not found'});
+    }
+
+    res.status(200).json({ message:'Data deleted Successfully', data: service });
+
+  } catch (error) {
+    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
   }
 };
 
@@ -478,7 +573,7 @@ exports.usersPrayers = async (req, res) => {
     res.send({ success: true, data: data });
   } catch (error) {
     
-    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 

@@ -139,18 +139,18 @@ exports.getAllSessionTrainer = async (req, res) => {
       .limit(pageSize)
       .lean();
 
-      const mData = await Promise.all(
-        data.map(async (item) => {
-          const session_r = await Rating.findOne({ to_id: userId, session: item._id }).lean(); // assuming 'dua' field corresponds to item._id
-          return {
-            ...item,
-            feedback: session_r || null // Add the found dua_d or null if not found
-          };
-        })
-      );
+    const mData = await Promise.all(
+      data.map(async (item) => {
+        const session_r = await Rating.findOne({ to_id: userId, session: item._id }).lean(); // assuming 'dua' field corresponds to item._id
+        return {
+          ...item,
+          feedback: session_r || null // Add the found dua_d or null if not found
+        };
+      })
+    );
 
     if (data.length > 0) {
-      res.status(200).json({ success: true, data:mData });
+      res.status(200).json({ success: true, data: mData });
     } else {
       res.status(200).json({ success: false, data: [], message: 'No Session Found' });
     }
@@ -181,30 +181,30 @@ exports.getAllSessionStudent = async (req, res) => {
       .populate("user").populate("to_id")
       .limit(pageSize)
       .lean();
-      const mData = await Promise.all(
-        data.map(async (item) => {
-          const trainer = await userAvailability.findOne({ user: item?.to_id}).populate("user").lean(); // assuming 'dua' field corresponds to item._id
-          return {
-            ...item,
-            trainerDocs: trainer || null // Add the found dua_d or null if not found
-          };
-        })
-      );
-      // const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
+    const mData = await Promise.all(
+      data.map(async (item) => {
+        const trainer = await userAvailability.findOne({ user: item?.to_id }).populate("user").lean(); // assuming 'dua' field corresponds to item._id
+        return {
+          ...item,
+          trainerDocs: trainer || null // Add the found dua_d or null if not found
+        };
+      })
+    );
+    // const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
     if (mData.length > 0) {
-      res.status(200).json({ success: true, data:mData });
+      res.status(200).json({ success: true, data: mData });
     } else {
       res.status(200).json({ success: false, data: [], message: 'No Session Found' });
     }
   } catch (error) {
-    
+
     res.status(500).json({ message: lang["error"] });
   }
 };
 
 exports.updateBookSession = async (req, res) => {
   try {
-    const {id,status} = req.params;
+    const { id, status } = req.params;
 
     const data = await BookSession.findOneAndUpdate(
       { _id: id },
@@ -215,13 +215,59 @@ exports.updateBookSession = async (req, res) => {
     );
 
     if (data == null) {
-      return res.status(404).json({ message: 'Session not updated',});
+      return res.status(404).json({ message: 'Session not updated', });
     }
 
-    res.status(200).json({ success:true,message: 'Session updated successfully', data: data });
+    res.status(200).json({ success: true, message: 'Session updated successfully', data: data });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"], });
+    res.status(500).json({ message: req?.user?.lang == 'english' ? lang["error"] : lang["error"], });
+  }
+};
+
+exports.getAllSessionAdmin = async (req, res) => {
+  const userId = req.user._id;
+  let startOfToday = '';
+  let endOfToday = '';
+  const lastId = parseInt(req.params.id) || 1;
+
+  // Check if lastId is a valid number
+  if (isNaN(lastId) || lastId < 0) {
+    return res.status(400).json({ error: lang["invalid"] });
+  }
+  const pageSize = 10;
+
+  const skip = Math.max(0, (lastId - 1)) * pageSize;
+  let query = {};
+  if (req.params.search) {
+    query.name = { $regex: new RegExp(req.params.search, 'i') };
+  }
+  if (req.params.status) {
+    query.status = req.params.status;
+  }
+  if (req.params.date) {
+    // query.bookedDate = { $gte: startOfToday, $lte: endOfToday }
+    query.bookedDate = req.params.date
+  }
+  if (req.params.type) {
+    query.sessionType = req.params.type;
+  }
+  // query.user = userId
+
+  try {
+    const data = await BookSession.find(query).skip(skip)
+      .limit(pageSize).lean();
+
+    const totalCount = await BookSession.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    if (data.length > 0) {
+      res.status(200).json({ success: true, data: data, count: { totalPage: totalPages, currentPageSize: data.length } });
+    } else {
+      res.status(200).json({ success: false, data: [], message: 'No more data', count: { totalPage: totalPages, currentPageSize: data.length } });
+    }
+  } catch (error) {
+    res.status(500).json({ message: req.user.lang == 'spanish' ? lang["error"] : lang["error"] });
   }
 };
 

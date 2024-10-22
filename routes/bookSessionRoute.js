@@ -10,6 +10,7 @@ router.get('/slots/:userId/:date',auth, bookSession.getSlotsData);
 router.get('/tutor/:status/:date?',auth, bookSession.getAllSessionTrainer);
 router.get('/student/:status/:date?',auth, bookSession.getAllSessionStudent);
 router.put('/update/:status/:id',auth, bookSession.updateBookSession);
+router.get('/admin/all/:status?/:type?/:date?',[auth,admin], bookSession.getAllSessionAdmin);
 
 
 // router.get('/buyer/:status/:id?', applicationController.getAllEmployeeApplication);

@@ -1864,10 +1864,16 @@
         }
       }
     },
-    "/api/session/admin/all/{status?}/{type?}/{date?}": {
+    "/api/session/admin/all/{id?}/{status?}/{type?}/{date?}": {
       "get": {
         "description": "",
         "parameters": [
+          {
+            "name": "id?",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "status?",
             "in": "path",

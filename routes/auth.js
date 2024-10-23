@@ -24,19 +24,21 @@ router.post('/', async (req, res) => {
 
     if (user.status == 'deleted') return res.status(400).send({ success: false, message: lang["deleted"] });
     if (user.status == 'deactivated') return res.status(400).send({ success: false, message: lang["deactivated"] });
-    if (user.verified == false) return res.status(400).send({ success: false, message: 'Please verify your profile'});
+    if (user.verified == false) return res.status(400).send({ success: false, message: 'Please verify your profile' });
     let trainerDocs = null
     if (user.type == 'trainer') {
       trainerDocs = await userAvailability.findOne({ user: user?._id }).populate("user");
     }
-    user.fcmtoken = fcmtoken
+    if (fcmtoken != 'any') {
+      user.fcmtoken = fcmtoken
+    }
     await user.save()
     const token = generateAuthToken(user._id, user.type, user.lang);
     res.send({
       token: token,
       user: user,
       success: true,
-      trainerDocs : trainerDocs?trainerDocs:false
+      trainerDocs: trainerDocs ? trainerDocs : false
     });
   } catch (error) {
     res.status(400).send({ success: false, message: lang["error"] });

@@ -206,6 +206,12 @@ exports.updateBookSession = async (req, res) => {
   try {
     const { id, status } = req.params;
 
+    const validStatus=['pending', 'started','completed','cancelled']
+
+    if (!validStatus.includes(status)) {
+     return res.status(400).send({ success: false, message:'Please send correct status' });
+    }
+
     const data = await BookSession.findOneAndUpdate(
       { _id: id },
       {

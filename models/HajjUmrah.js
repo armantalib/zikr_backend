@@ -26,6 +26,10 @@ const hajjUmrah = new mongoose.Schema({
     type: String,
 
   },
+  icon: {
+    type: String,
+
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -15,9 +15,9 @@ const moment = require('moment');
 
 exports.create = async (req, res) => {
   try {
-    const { title, desc, image, sub_title,sub_data } = req.body;
+    const { title, desc, image, sub_title,sub_data,icon } = req.body;
     const data = new HajjUmrah({
-      title, desc, image, sub_title,sub_data
+      title, desc, image, sub_title,sub_data,icon
     });
     await data.save();
     res.send({ success: true, data: data });
@@ -28,13 +28,13 @@ exports.create = async (req, res) => {
 exports.updateHajjUmrah = async (req, res) => {
   try {
     const {
-      title, desc, image, sub_title,sub_data,
+      title, desc, image, sub_title,sub_data,icon,
       id
     } = req.body;
 
     const updateFields = Object.fromEntries(
       Object.entries({
-        title, desc, image, sub_title,sub_data
+        title, desc, image, sub_title,sub_data,icon
       }).filter(([key, value]) => value !== undefined)
     );
     if (Object.keys(updateFields).length === 0) {

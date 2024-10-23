@@ -2084,6 +2084,9 @@
                 },
                 "sub_data": {
                   "example": "any"
+                },
+                "icon": {
+                  "example": "any"
                 }
               }
             }
@@ -2139,6 +2142,9 @@
                   "example": "any"
                 },
                 "sub_data": {
+                  "example": "any"
+                },
+                "icon": {
                   "example": "any"
                 },
                 "id": {

@@ -39,17 +39,17 @@ exports.create = async (req, res) => {
     const users = await User.findById(to_id);
     const myUser = await User.findById(userId);
 
-    // await sendNotification({
-    //   user: userId,
-    //   to_id: to_id,
-    //   description: `${'Your session has been booked'} ${myUser.fname + " " + myUser.lname
-    //     }`,
-    //   type: "order",
-    //   title: 'Book Session',
-    //   fcmtoken: users.fcmtoken,
-    //   order: bookSession._id,
-    //   noti: users.noti,
-    // });
+    await sendNotification({
+      user: userId,
+      to_id: to_id,
+      description: `${'Your session has been booked'} ${myUser.fname + " " + myUser.lname
+        }`,
+      type: "session",
+      title: 'Book Session',
+      fcmtoken: users.fcmtoken,
+      session_id: bookSession._id,
+      noti: users.noti,
+    });
     // await notificationAdminService({
     //   user: userId,
     //   description: `${users.fname + " " + users.lname} book the session ${myUser.fname + " " + myUser.lname
@@ -106,6 +106,8 @@ exports.create = async (req, res) => {
         order: bookSession,
       });
   } catch (error) {
+    console.log("V",error);
+    
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang2["error"] });
   }
 };

@@ -11,22 +11,14 @@ const notificationSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  gig: {
+  session_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Gig'
-  },
-  request: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Request'
-  },
-  order: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application'
+    ref: 'session'
   },
   type: {
     type: String,
     default: 'rating',
-    enum: ['rating','request', 'order','message']
+    enum: ['rating','session','message']
   },
   description: {
     type: String,

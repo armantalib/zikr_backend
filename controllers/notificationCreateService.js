@@ -32,10 +32,10 @@ exports.sendNotification = async ({
           const notification = new Notification(updateFields);
 
           await notification.save();
-          if (noti==true && (fcmtoken!==null && fcmtoken!=="null" && fcmtoken!=='') ) {
-            console.log(fcmtoken)
+          if (noti==true && (fcmtoken!==null && fcmtoken!=="null" && fcmtoken!=='' && fcmtoken!=='any') ) {
+            let fcm2 = JSON.parse(fcmtoken)
                const message = {
-                 token: fcmtoken, // replace with the user's device token
+                 token: fcm2, // replace with the user's device token
                  notification: {
                    title: title,
                    body: description,

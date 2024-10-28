@@ -9,7 +9,7 @@ const userAvailabilitySchema = new mongoose.Schema({
   teach:[],
   availability:{
     type: Boolean,
-    default: true,
+    default: false,
   },
   document:{
     type: String,

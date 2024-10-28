@@ -328,8 +328,8 @@ router.post('/trainer/availability', auth,async (req, res) => {
       hours,
     } = req.body;
 
-  //  const data = await userAvailability.findOne({user: req.user._id});
-  //  if (data) return res.status(404).send({ success: false, message:'Availability Already exist please update information' });
+   const data = await userAvailability.findOne({user: req.user._id});
+   if (data) return res.status(404).send({ success: false, message:'Availability Already exist please update information' });
   
    const saveData = new userAvailability({
       user:req.user._id,
@@ -348,6 +348,47 @@ router.post('/trainer/availability', auth,async (req, res) => {
     return res.status(500).json({ error: lang["error"] });
   }
 });
+
+router.post('/trainer/availability/web', auth,async (req, res) => {
+  try {
+    const {
+      teach,
+      availability,
+      document,
+      country,
+      city,
+      hours,
+      introduction,
+      languages,
+      hourlyRate
+
+    } = req.body;
+
+  //  const data = await userAvailability.findOne({user: req.user._id});
+  //  if (data) return res.status(404).send({ success: false, message:'Availability Already exist please update information' });
+  
+   const saveData = new userAvailability({
+      user:req.user._id,
+      teach,
+      availability,
+      document,
+      country,
+      city,
+      hours,
+      introduction,
+      languages,
+      hourlyRate
+
+    });
+    await saveData.save();
+
+    const mData = await userAvailability.findOne({user: req.user._id}).populate("user");
+    res.send({ success: true,statusCode:200, message: lang["acc_create"],  data: saveData,trainerDocs:mData });
+  } catch (error) {
+    return res.status(500).json({ error: lang["error"] });
+  }
+});
+
 router.get('/trainer/availability', auth, async (req, res) => {
   const data = await userAvailability.findOne({user: req.user._id}).populate("user");
   res.send({ success:data.length==0?false:true, data });

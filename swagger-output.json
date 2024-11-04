@@ -126,6 +126,32 @@
         }
       }
     },
+    "/api/users/tutor/counts": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "440": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/users/admin/all/{type}/{id}/{search?}": {
       "get": {
         "description": "",
@@ -730,6 +756,12 @@
                   "example": "any"
                 },
                 "location": {
+                  "example": "any"
+                },
+                "country": {
+                  "example": "any"
+                },
+                "city": {
                   "example": "any"
                 },
                 "fcmtoken": {

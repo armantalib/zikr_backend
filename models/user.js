@@ -69,6 +69,14 @@ const userSchema = new mongoose.Schema({
   fcmtoken: {
     type:String,
   },
+  country:{
+    name: String,
+    shortName:String,
+  },
+  city:{
+    name: String,
+    country:String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -54,6 +54,28 @@ router.get('/admin/dashboard', auth, async (req, res) => {
   });
 });
 
+router.get('/tutor/counts', auth, async (req, res) => {
+  const userId = req.user._id;
+  const session = await BookSession.countDocuments({to_id:userId})
+  const totalEarning = 0
+  let earningSum = 0;
+  // const totalEar = await Promise.all(
+  //   totalEarning.map(async (item) => {
+  //     earningSum = earningSum + balance
+  //     return {
+  //       ...item,
+  //       feedback: session_r || null // Add the found dua_d or null if not found
+  //     };
+  //   })
+  // );
+  res.send({
+    success: true,
+    totalSession:session,
+    totalEarning: totalEarning,
+    totalStudent:session
+  });
+});
+
 router.get('/totalUnseens/:type', auth, async (req, res) => {
    // #swagger.ignore = true
   const userId = req.user._id;
@@ -536,6 +558,8 @@ router.put('/update-user', auth, async (req, res) => {
     email,
     image,
     location,
+    country,
+    city,
     fcmtoken
   } = req.body;
 
@@ -546,6 +570,8 @@ router.put('/update-user', auth, async (req, res) => {
       email,
       image,
       location,
+      country,
+      city,
       fcmtoken
     }).filter(([key, value]) => value !== undefined)
   );

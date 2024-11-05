@@ -17,7 +17,8 @@ const doc = {
         "https"
       ],
     // host: 'localhost:8080'
-    host: 'api.zikr.ae'
+    // host: 'api.zikr.ae'
+    host: 'zikr-backend.onrender.com'
 };
 
 const outputFile = './swagger-output.json';

@@ -5,7 +5,7 @@
     "description": "Zikr App API",
     "version": "1.0.0"
   },
-  "host": "api.zikr.ae",
+  "host": "zikr-backend.onrender.com",
   "basePath": "/",
   "schemes": [
     "https"

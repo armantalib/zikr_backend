@@ -240,6 +240,8 @@ exports.getHajjUmrahApp = async (req, res) => {
       res.status(200).json({ success: false, data: [], message: 'No Data Found' });
     }
   } catch (error) {
+    console.log("E",error);
+    
     res.status(500).json({ message: lang["error"] });
   }
 };

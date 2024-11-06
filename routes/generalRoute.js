@@ -7,7 +7,7 @@ const auth = require('../middleware/auth');
 router.post('/admin/hajj/create', [auth, admin], generalController.create);
 router.put('/admin/hajj/update', [auth, admin], generalController.updateHajjUmrah);
 router.delete('/admin/hajj/:id', [auth, admin], generalController.deleteHajjUmrah);
-router.get('/admin/hajj/:id/:search?', [auth, admin], generalController.getAllHajjUmrahAdmin);
+router.get('/admin/hajj/:id/:search?', [auth], generalController.getAllHajjUmrahAdmin);
 router.get('/hajj/all/:id?', [auth], generalController.getHajjUmrahApp);
 
 router.post('/admin/dua/create', [auth, admin], generalController.duaCreate);

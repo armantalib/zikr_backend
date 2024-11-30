@@ -612,6 +612,16 @@ router.put('/update/:id/:status', [auth,admin], async (req, res) => {
   res.send({ success: true, message: req.user.lang=='spanish'?lang["userupdate"]:lang["userupdate"], user });
 });
 
+router.put('/update/:type', [auth], async (req, res) => {
+  const userId = req.user._id
+
+  const user = await User.findByIdAndUpdate(userId, {type:req.params.type}, {new: true});
+
+  if (!user) return res.status(404).send({ success: false, message: lang["nouserfound"] });
+
+  res.send({ success: true, message: req.user.lang=='spanish'?lang["userupdate"]:lang["userupdate"], user });
+});
+
 router.delete('/', auth, async (req, res) => {
  
   const user = await User.findByIdAndUpdate(req.user._id, {status:'deleted'}, {new: true});

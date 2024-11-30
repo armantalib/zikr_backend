@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema({
   },
   session_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'session'
+    ref: 'BookSession'
   },
   type: {
     type: String,

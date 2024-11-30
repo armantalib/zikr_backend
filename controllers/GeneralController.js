@@ -336,7 +336,7 @@ exports.getAllHajjUmrahAdmin = async (req, res) => {
 
   // Check if lastId is a valid number
   if (isNaN(lastId) || lastId < 0) {
-    return res.status(400).json({ error: req.user.lang == 'spanish' ? lang["invalid"] : lang["invalid"] });
+    return res.status(400).json({ error:  lang["invalid"] });
   }
   const pageSize = 10;
 

@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema({
   type: {
     type: String,
     default: 'student',
-    enum: ['student', 'trainer','admin']
+    enum: ['student', 'trainer','admin','hybrid']
   },
   lang: {
     type: String,

@@ -9,7 +9,7 @@ exports.getApplicationDetails = async (req, res) => {
   }
   query.to_id = req.user._id
   try {
-    const notifications = await Notification.find(query).populate("user").populate("gig").populate("request").populate("order").sort({ _id: -1 }).limit(15).lean();
+    const notifications = await Notification.find(query).populate("user").populate("session_id").populate("to_id").sort({ _id: -1 }).limit(15).lean();
 
     if (notifications.length > 0) {
       res.status(200).json({ success: true, notifications: notifications });

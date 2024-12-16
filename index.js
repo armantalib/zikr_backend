@@ -44,7 +44,10 @@ require('./startup/cron')();
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/privacy_policy', function(req, res){
+  res.sendFile(__dirname + '/privacy_policy.html');
+});
 // Route to handle the POST request
 app.post('/newredirect/callback', async(req, res) => {
     try {

@@ -47,7 +47,7 @@ async function sendNotificationPush(fcmtoken,title,description) {
             apns: {
                 payload: {
                     aps: {
-                        sound: sound,
+                        sound: sound+'.wav',
                     },
                 },
             },

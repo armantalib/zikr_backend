@@ -514,10 +514,10 @@ router.post('/verify-otp/forget-password', passwordauth, async (req, res) => {
 router.post('/verify-otp/sign-up', async (req, res) => {
   try {
     const { code,email } = req.body;
-
-    const verificationRecord = await User.findOne({ email });
+    const updatEmail = String(email).trim().toLocaleLowerCase()
+    const verificationRecord = await User.findOne({email: updatEmail });
     if (Number(verificationRecord.code) !== Number(code)) return res.status(400).send({ success: false, message:lang["incorrect"]});
-    await User.findOneAndUpdate({ email }, { verified: true });
+    await User.findOneAndUpdate({ email:updatEmail }, { verified: true });
     return res.json({ success: true, message: 'Verification code match successfully' });
   } catch (error) {
     console.error('Error sending verification code:', error);

@@ -5,6 +5,7 @@ const Favorite = require("../models/Favorite1");
 const FavDua = require("../models/FavDua");
 const Settings = require("../models/Settings");
 const UsersPrayers = require("../models/UsersPrayers");
+const QuranPakTime = require("../models/QuranPakTime");
 
 const { User } = require("../models/user");
 const { sendNotification } = require("./notificationCreateService");
@@ -15,9 +16,9 @@ const moment = require('moment');
 
 exports.create = async (req, res) => {
   try {
-    const { title, desc, image, sub_title,sub_data,icon } = req.body;
+    const { title, desc, image, sub_title, sub_data, icon } = req.body;
     const data = new HajjUmrah({
-      title, desc, image, sub_title,sub_data,icon
+      title, desc, image, sub_title, sub_data, icon
     });
     await data.save();
     res.send({ success: true, data: data });
@@ -28,24 +29,24 @@ exports.create = async (req, res) => {
 exports.updateHajjUmrah = async (req, res) => {
   try {
     const {
-      title, desc, image, sub_title,sub_data,icon,
+      title, desc, image, sub_title, sub_data, icon,
       id
     } = req.body;
 
     const updateFields = Object.fromEntries(
       Object.entries({
-        title, desc, image, sub_title,sub_data,icon
+        title, desc, image, sub_title, sub_data, icon
       }).filter(([key, value]) => value !== undefined)
     );
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).send({ success: false, message: 'Please send correct data' });
-    }  
+    }
     const data = await HajjUmrah.findByIdAndUpdate(id, updateFields, {
       new: true
     });
-  
-    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
-  
+
+    if (!data) return res.status(404).send({ success: false, message: 'Please send id of object' });
+
     res.send({ success: true, message: 'Update data successfully', data });
 
   } catch (error) {
@@ -92,13 +93,13 @@ exports.updateDua = async (req, res) => {
     );
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).send({ success: false, message: 'Please send correct data' });
-    }  
+    }
     const data = await Duas.findByIdAndUpdate(id, updateFields, {
       new: true
     });
-  
-    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
-  
+
+    if (!data) return res.status(404).send({ success: false, message: 'Please send id of object' });
+
     res.send({ success: true, message: 'Update data successfully', data });
 
   } catch (error) {
@@ -120,13 +121,13 @@ exports.updateDailyAyat = async (req, res) => {
     );
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).send({ success: false, message: 'Please send correct data' });
-    }  
+    }
     const data = await DailyAyat.findByIdAndUpdate(id, updateFields, {
       new: true
     });
-  
-    if (!data) return res.status(404).send({ success: false, message:'Please send id of object' });
-  
+
+    if (!data) return res.status(404).send({ success: false, message: 'Please send id of object' });
+
     res.send({ success: true, message: 'Update data successfully', data });
 
   } catch (error) {
@@ -136,21 +137,21 @@ exports.updateDailyAyat = async (req, res) => {
 
 exports.favQCreate = async (req, res) => {
   try {
-    const { title, arabic, english, verse_id,verse_key } = req.body;
+    const { title, arabic, english, verse_id, verse_key } = req.body;
     const user = req.user._id;
     const dua_d = await Favorite.findOne({ user: user, verse_id: verse_id }).lean()
-   let data = null
-    if(dua_d){
-      await Favorite.deleteMany({verse_id:verse_id});
-    }else{
-     data = new Favorite({
-      title, arabic, english, verse_id,verse_key,user:user
-    });
-    await data.save();
-  }
+    let data = null
+    if (dua_d) {
+      await Favorite.deleteMany({ verse_id: verse_id });
+    } else {
+      data = new Favorite({
+        title, arabic, english, verse_id, verse_key, user: user
+      });
+      await data.save();
+    }
     res.send({ success: true, data: data });
   } catch (error) {
-    
+
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
@@ -162,8 +163,8 @@ exports.favDuaCreate = async (req, res) => {
 
     let data = null;
     if (dua_d) {
-      await FavDua.deleteMany({dua:dua});
-      
+      await FavDua.deleteMany({ dua: dua });
+
     } else {
       data = new FavDua({ user, dua });
       await data.save();
@@ -176,34 +177,69 @@ exports.favDuaCreate = async (req, res) => {
 
 exports.settingUpdate = async (req, res) => {
   try {
-    const { notification_reminder,azan_voice,namaz_timing, azan_voice_switch,location,juma_time} = req.body;
+    const { notification_reminder, azan_voice, namaz_timing, azan_voice_switch, location, juma_time } = req.body;
     const user = req.user._id;
-    const setting = await Settings.findOne({ user: user}).lean()
+    const setting = await Settings.findOne({ user: user }).lean()
     const updateFields = Object.fromEntries(
       Object.entries({
-        notification_reminder,azan_voice,namaz_timing, azan_voice_switch,location,juma_time
+        notification_reminder, azan_voice, namaz_timing, azan_voice_switch, location, juma_time
       }).filter(([key, value]) => value !== undefined)
     );
     // Check if there are any fields to update
     if (Object.keys(updateFields).length === 0) {
-      return res.status(400).send({ success: false, message: req.user.lang=='spanish'?lang["novalid"]:lang["novalid"]  });
+      return res.status(400).send({ success: false, message: req.user.lang == 'spanish' ? lang["novalid"] : lang["novalid"] });
     }
 
-   let data = null
-    if(setting){
-       data = await Settings.findByIdAndUpdate(setting?._id, updateFields, {
+    let data = null
+    if (setting) {
+      data = await Settings.findByIdAndUpdate(setting?._id, updateFields, {
         new: true
       });
-    }else{
-     data = new Settings({
-      ...updateFields,
-      user:user
-    });
-    await data.save();
-  }
+    } else {
+      data = new Settings({
+        ...updateFields,
+        user: user
+      });
+      await data.save();
+    }
     res.send({ success: true, data: data });
   } catch (error) {
-    
+
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
+  }
+};
+
+
+exports.quranPakTimeUpdate = async (req, res) => {
+  try {
+    const { time, date } = req.body;
+    const user = req.user._id;
+    const setting = await QuranPakTime.findOne({ user: user, date: date }).lean()
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        time, date
+      }).filter(([key, value]) => value !== undefined)
+    );
+    // Check if there are any fields to update
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ success: false, message: req.user.lang == 'spanish' ? lang["novalid"] : lang["novalid"] });
+    }
+
+    let data = null
+    if (setting) {
+      let updateTime = parseInt(time) + parseInt(setting?.time)
+      data = await QuranPakTime.findByIdAndUpdate(setting?._id, { time: updateTime, date: date }, {
+        new: true
+      });
+    } else {
+      data = new QuranPakTime({
+        ...updateFields,
+        user: user
+      });
+      await data.save();
+    }
+    res.send({ success: true, data: data });
+  } catch (error) {
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
@@ -213,10 +249,10 @@ exports.settingUpdate = async (req, res) => {
 
 exports.getSettings = async (req, res) => {
   try {
-    const data = await Settings.findOne({user: req.user._id}).populate("user");
-    res.send({ success:data.length==0?false:true, data });
+    const data = await Settings.findOne({ user: req.user._id }).populate("user");
+    res.send({ success: data.length == 0 ? false : true, data });
   } catch (error) {
-    
+
   }
 }
 
@@ -240,8 +276,8 @@ exports.getHajjUmrahApp = async (req, res) => {
       res.status(200).json({ success: false, data: [], message: 'No Data Found' });
     }
   } catch (error) {
-    console.log("E",error);
-    
+    console.log("E", error);
+
     res.status(500).json({ message: lang["error"] });
   }
 };
@@ -308,18 +344,18 @@ exports.getDuaApp = async (req, res) => {
       .limit(pageSize)
       .lean();
 
-      const duaData = await Promise.all(
-        data.map(async (item) => {
-          const dua_d = await FavDua.findOne({ user: userId, dua: item._id }).lean(); // assuming 'dua' field corresponds to item._id
-          return {
-            ...item,
-            favorite: dua_d?true:false // Add the found dua_d or null if not found
-          };
-        })
-      );
+    const duaData = await Promise.all(
+      data.map(async (item) => {
+        const dua_d = await FavDua.findOne({ user: userId, dua: item._id }).lean(); // assuming 'dua' field corresponds to item._id
+        return {
+          ...item,
+          favorite: dua_d ? true : false // Add the found dua_d or null if not found
+        };
+      })
+    );
 
     if (data.length > 0) {
-      res.status(200).json({ success: true, data:duaData });
+      res.status(200).json({ success: true, data: duaData });
     } else {
       res.status(200).json({ success: false, data: [], message: 'No Data Found' });
     }
@@ -336,7 +372,7 @@ exports.getAllHajjUmrahAdmin = async (req, res) => {
 
   // Check if lastId is a valid number
   if (isNaN(lastId) || lastId < 0) {
-    return res.status(400).json({ error:  lang["invalid"] });
+    return res.status(400).json({ error: lang["invalid"] });
   }
   const pageSize = 10;
 
@@ -351,7 +387,7 @@ exports.getAllHajjUmrahAdmin = async (req, res) => {
     const data = await HajjUmrah.find(query).skip(skip)
       .limit(pageSize).lean();
 
-      const totalCount = await HajjUmrah.countDocuments(query);
+    const totalCount = await HajjUmrah.countDocuments(query);
     const totalPages = Math.ceil(totalCount / pageSize);
 
     if (data.length > 0) {
@@ -497,13 +533,13 @@ exports.deleteHajjUmrah = async (req, res) => {
     const service = await HajjUmrah.findByIdAndDelete(serviceId);
 
     if (service == null) {
-      return res.status(404).json({ message: 'Data not found'});
+      return res.status(404).json({ message: 'Data not found' });
     }
 
-    res.status(200).json({ message:'Data deleted Successfully', data: service });
+    res.status(200).json({ message: 'Data deleted Successfully', data: service });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
+    res.status(500).json({ message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
@@ -514,13 +550,13 @@ exports.deleteDua = async (req, res) => {
     const service = await Duas.findByIdAndDelete(serviceId);
 
     if (service == null) {
-      return res.status(404).json({ message: 'Data not found'});
+      return res.status(404).json({ message: 'Data not found' });
     }
 
-    res.status(200).json({ message:'Data deleted Successfully', data: service });
+    res.status(200).json({ message: 'Data deleted Successfully', data: service });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
+    res.status(500).json({ message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
@@ -531,50 +567,117 @@ exports.deleteDailyAyat = async (req, res) => {
     const service = await DailyAyat.findByIdAndDelete(serviceId);
 
     if (service == null) {
-      return res.status(404).json({ message: 'Data not found'});
+      return res.status(404).json({ message: 'Data not found' });
     }
 
-    res.status(200).json({ message:'Data deleted Successfully', data: service });
+    res.status(200).json({ message: 'Data deleted Successfully', data: service });
 
   } catch (error) {
-    res.status(500).json({ message:req?.user?.lang=='english'?lang["error"]:lang["error"] });
+    res.status(500).json({ message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };
 
 exports.usersPrayers = async (req, res) => {
   try {
-    const {namaz_name,status, status_text} = req.body;
+    const { namaz_name, status, status_text } = req.body;
     const user = req.user._id;
     const today = new Date();
     const startOfToday = new Date(today.setHours(0, 0, 0, 0));  // Start of today
     const endOfToday = new Date(today.setHours(23, 59, 59, 999));  // End of today
-    const setting = await UsersPrayers.findOne({ user: user,namaz_name:namaz_name,
+    const setting = await UsersPrayers.findOne({
+      user: user, namaz_name: namaz_name,
       createdAt: { $gte: startOfToday, $lte: endOfToday }
 
     }).lean()
     const updateFields = Object.fromEntries(
       Object.entries({
-        namaz_name,status, status_text
+        namaz_name, status, status_text
       }).filter(([key, value]) => value !== undefined)
     );
     // Check if there are any fields to update
     if (Object.keys(updateFields).length === 0) {
-      return res.status(400).send({ success: false, message: req.user.lang=='spanish'?lang["novalid"]:lang["novalid"]  });
+      return res.status(400).send({ success: false, message: req.user.lang == 'spanish' ? lang["novalid"] : lang["novalid"] });
     }
 
-   let data = null
-    if(setting){
-      return res.status(400).send({ success: false, message: 'You already prayed this prayer'  });
-    }else{
-     data = new UsersPrayers({
-      ...updateFields,
-      user:user
-    });
-    await data.save();
-  }
+    let data = null
+    if (setting) {
+      return res.status(400).send({ success: false, message: 'You already prayed this prayer' });
+    } else {
+      data = new UsersPrayers({
+        ...updateFields,
+        user: user
+      });
+      await data.save();
+    }
     res.send({ success: true, data: data });
   } catch (error) {
+
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
+  }
+};
+
+
+exports.getAllPrayers = async (req, res) => {
+  try {
+    const { date } = req.body;
+    const user = req.user._id;
+    const today = new Date(date);
+
+    const startOfToday = new Date(today.setHours(0, 0, 0, 0));  // Start of today
+    const endOfToday = new Date(today.setHours(23, 59, 59, 999));  // End of today
+    const prayers = await UsersPrayers.find({
+      user: user,
+      createdAt: { $gte: startOfToday, $lte: endOfToday }
+
+    }).lean()
+
+    const quran_pak_time = await QuranPakTime.find({
+      user: user,
+      createdAt: { $gte: startOfToday, $lte: endOfToday }
+
+    }).lean()
+
+
+    res.send({ success: true, data: prayers,quran_pak_time:quran_pak_time });
+  } catch (error) {
+
+
+    res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
+  }
+};
+
+
+
+
+exports.getNamazProgressCal = async (req, res) => {
+  try {
+    const { start_month, end_month } = req.body;
+
+    const user = req.user._id;
+    const start = new Date(start_month);
+    const end = new Date(end_month);
+    const startOfToday = new Date(start.setHours(0, 0, 0, 0));  // Start of today
+    const endOfToday = new Date(end.setHours(23, 59, 59, 999));  // End of today
+   
     
+    const prayers = await UsersPrayers.countDocuments({
+      user: user,
+      status : 'yes',
+      createdAt: { $gte: startOfToday, $lte: endOfToday }
+    }).lean()
+
+    const quran_pak = await QuranPakTime.find({
+      user: user,
+      createdAt: { $gte: startOfToday, $lte: endOfToday }
+    }).lean()
+
+    
+
+    let unPrayed=150-prayers;
+    let percent_ = (prayers * 100) / 150
+    res.send({ success: true, prayed: prayers,un_prayed:unPrayed , percent:percent_,quran_pak_time:quran_pak });
+  } catch (error) {
+
     res.status(500).json({ success: false, message: req?.user?.lang == 'english' ? lang["error"] : lang["error"] });
   }
 };

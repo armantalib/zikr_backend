@@ -33,6 +33,11 @@ router.delete('/admin/dailyAyat/:id', [auth, admin], generalController.deleteDai
 router.get('/admin/dailyAyat/:id/:search?', [auth, admin], generalController.getAllDailyAyatAdmin);
 router.get('/dailyAyat/all/:id?', [auth], generalController.getDuaApp);
 
+router.post('/quranPakTime', [auth], generalController.quranPakTimeUpdate);
+router.post('/get/prayers', [auth], generalController.getAllPrayers);
+router.post('/get/prayers/stats', [auth], generalController.getNamazProgressCal);
+
+
 
 
 

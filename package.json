@@ -1,0 +1,59 @@
+{
+  "name": "sushbuddies_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "doc": "node swagger.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "23"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "Buffer": "^0.0.0",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
+    "config": "^3.3.9",
+    "cors": "^2.8.5",
+    "country-list": "^2.3.0",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "firebase-admin": "^12.3.0",
+    "fs": "^0.0.1-security",
+    "gridfs-stream": "^1.1.1",
+    "joi": "^17.11.0",
+    "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.45",
+    "mongodb": "^6.2.0",
+    "mongoose": "^8.0.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-gridfs-storage": "^5.0.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.7",
+    "sharp": "0.32.6",
+    "socket.io": "^4.7.4",
+    "stripe": "^16.10.0",
+    "swagger-ui-express": "^5.0.1",
+    "twilio": "^4.19.0",
+    "util": "^0.12.5",
+    "winston": "^3.11.0",
+    "winston-mongodb": "^5.1.1",
+    "zxcvbn": "^4.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "swagger-autogen": "^2.23.7"
+  }
+}
